@@ -3,29 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة السيرفر الرسمية - قطاع الشرطة والقوانين</title>
+    <title>قطاع العساكر - LSPD</title>
     <!-- Bootstrap 5 CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        :root {
-            --primary-dark: #121620;
-            --secondary-dark: #1b2230;
-            --accent-gold: #f39c12;
-            --lspd-blue: #0d6efd;
-        }
         body {
-            background-color: var(--primary-dark);
-            color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
         }
-        .navbar, .card, .modal-content, footer {
-            background-color: var(--secondary-dark) !important;
-            border-color: #2c3e50 !important;
+        /* شريط تغيير المنظور السفلي */
+        #role-switcher-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #121620;
+            border-top: 2px solid #ffc107;
+            z-index: 1050;
+            padding: 10px 20px;
+            color: #fff;
         }
-        .text-warning {
-            color: var(--accent-gold) !important;
+        .content-section {
+            display: none;
         }
-        /* واجهة الترحيب التمهيدية */
+        .content-section.active {
+            display: block;
+        }
+        /* واجهة الترحيب السريعة */
         #welcome-overlay {
             position: fixed;
             top: 0;
@@ -40,34 +43,15 @@
             transition: opacity 0.5s ease;
         }
         .welcome-card {
-            background: var(--secondary-dark);
-            border: 2px solid var(--accent-gold);
+            background: #1b2230;
+            border: 2px solid #ffc107;
             border-radius: 15px;
             padding: 40px;
             text-align: center;
             box-shadow: 0 0 30px rgba(243, 156, 18, 0.3);
             max-width: 600px;
             width: 90%;
-        }
-        .table-dark {
-            background-color: #161d2b;
-        }
-        /* شريط التحكم السفلي للمنظورات والصلاحيات */
-        #role-switcher-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: #090c10;
-            border-top: 1px solid var(--accent-gold);
-            z-index: 1050;
-            padding: 10px 20px;
-        }
-        .content-section {
-            display: none;
-        }
-        .content-section.active {
-            display: block;
+            color: #fff;
         }
     </style>
 </head>
@@ -86,252 +70,266 @@
     </div>
 
     <!-- 2. شريط التنقل العلوي (Navbar) -->
-    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand text-warning fw-bold" href="#" onclick="switchPage('lspd')">🌟 اسم السيرفر الرسمي</a>
+            <a class="navbar-brand" href="#" onclick="switchPage('lspd')">موقع السيرفر</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#" onclick="switchPage('lspd')">الرئيسية / قطاع العساكر</a>
-                    </li>
+                <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="#" onclick="switchPage('rules')">القوانين العامة</a>
                     </li>
+                    <!-- قائمة قطاع العساكر المضافة -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-warning fw-bold" href="#" id="lspdDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            🛡️ قطاع العساكر (LSPD)
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="lspdDropdown">
+                            <li><a class="dropdown-item" href="#lspd-outfits" onclick="switchPage('lspd')">أزياء وتجهيزات الرتب</a></li>
+                            <li><a class="dropdown-item" href="#lspd-special" onclick="switchPage('lspd')">الوحدات الخاصة</a></li>
+                        </ul>
+                    </li>
                     <li class="nav-item">
-                        <a class="nav-link text-warning" href="#" onclick="switchPage('logs')">📊 سجل التغييرات الإدارية</a>
+                        <a class="nav-link text-info" href="#" onclick="switchPage('logs')">📊 سجل التغييرات</a>
                     </li>
                 </ul>
-                <span class="navbar-text text-info small" id="current-role-badge">
+                <span class="navbar-text text-warning small" id="current-role-badge">
                     المنظور الحالي: زائر (Visitor)
                 </span>
             </div>
         </div>
     </nav>
 
-    <!-- 3. المحتوى الرئيسي: صفحة قطاع العساكر (LSPD) -->
+    <!-- 3. محتوى صفحة العساكر الرئيسي (أصبح بنفس تنسيق صفحة القوانين تماماً) -->
     <div class="container mt-4 content-section active" id="section-lspd">
-        <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-secondary rounded shadow-sm">
-            <h3 class="m-0 text-warning">🛡️ الدليل الموحد لملابس ومركبات قطاع LSPD</h3>
-            <div id="admin-controls" class="d-none">
-                <button id="edit-btn" class="btn btn-outline-warning btn-sm" onclick="toggleEditMode()">✏️ تعديل المحتوى</button>
-                <button id="save-btn" class="btn btn-success btn-sm d-none" onclick="saveContent()">💾 حفظ التغييرات</button>
+        <div class="p-4 bg-white rounded shadow-sm text-dark">
+            <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-3">
+                <h3 class="text-primary m-0">🛡️ الدليل الموحد لملابس ومركبات قطاع LSPD</h3>
+                
+                <!-- أزرار التعديل تظهر فقط لصاحب صلاحية LSPD Admin أو Manager -->
+                <div id="admin-controls" class="d-none">
+                    <button id="edit-btn" class="btn btn-outline-warning btn-sm text-dark fw-bold" onclick="toggleEditMode()">✏️ تعديل المحتوى</button>
+                    <button id="save-btn" class="btn btn-success btn-sm d-none" onclick="saveContent()">💾 حفظ التغييرات</button>
+                </div>
             </div>
-        </div>
+            
+            <p class="text-secondary mb-4">هذه الصفحة مخصصة لعرض الأزياء والمركبات والتجهيزات الرسمية لجميع رتب ووحدات قطاع LSPD.</p>
 
-        <div id="lspd-editable-content" contenteditable="false" class="p-4 border rounded bg-dark shadow-sm">
+            <!-- منطقة المحتوى القابلة للتعديل -->
+            <div id="lspd-editable-content" contenteditable="false">
 
-            <!-- قسم أزياء ومركبات الرتب الأساسية -->
-            <section id="lspd-outfits" class="mb-5">
-                <h4 class="text-warning border-bottom pb-2 mb-3">👕 أزياء ومركبات ورتب قطاع LSPD الأساسية</h4>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-dark text-center align-middle">
-                        <thead>
-                            <tr>
-                                <th>الرتبة (Rank)</th>
-                                <th>المركبة (Vehicle)</th>
-                                <th>Shirt</th>
-                                <th>Jackets</th>
-                                <th>Legs</th>
-                                <th>Body Armor</th>
-                                <th>Bags / Parachute</th>
-                                <th>Decals</th>
-                                <th>Hands</th>
-                                <th>Shoes</th>
-                                <th>Scarf & Chains</th>
-                                <th>Mask</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Solo Cadet</strong>[cite: 2]</td>
-                                <td>Ford[cite: 2]</td>
-                                <td>Item: 34<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 1062<br><small>Text: 3</small>[cite: 2]</td>
-                                <td>Item: 433<br><small>Text: 4</small>[cite: 2]</td>
-                                <td>Item: 201<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 77<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 21<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Officer I</strong>[cite: 2]</td>
-                                <td>Ford[cite: 2]</td>
-                                <td>Item: 377<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 1060<br><small>Text: 4</small>[cite: 2]</td>
-                                <td>Item: 433<br><small>Text: 6</small>[cite: 2]</td>
-                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 229<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 277<br><small>Text: 1</small>[cite: 2]</td>
-                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 17<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Officer II</strong>[cite: 2]</td>
-                                <td>Ford Taurus[cite: 2]</td>
-                                <td>Item: 34<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 1060<br><small>Text: 4</small>[cite: 2]</td>
-                                <td>Item: 433<br><small>Text: 4</small>[cite: 2]</td>
-                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 229<br><small>Text: 1</small>[cite: 2]</td>
-                                <td>Item: 277<br><small>Text: 2</small>[cite: 2]</td>
-                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 17<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Officer III</strong>[cite: 2]</td>
-                                <td>Charger[cite: 2]</td>
-                                <td>Item: 34<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 1060<br><small>Text: 4</small>[cite: 2]</td>
-                                <td>Item: 433<br><small>Text: 4</small>[cite: 2]</td>
-                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 229<br><small>Text: 2</small>[cite: 2]</td>
-                                <td>Item: 277<br><small>Text: 3</small>[cite: 2]</td>
-                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 17<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Senior Officer</strong>[cite: 2]</td>
-                                <td>2018 Tahoe[cite: 2]</td>
-                                <td>Item: 34<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 1060<br><small>Text: 4</small>[cite: 2]</td>
-                                <td>Item: 433<br><small>Text: 4</small>[cite: 2]</td>
-                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 229<br><small>Text: 3</small>[cite: 2]</td>
-                                <td>Item: 277<br><small>Text: 3</small>[cite: 2]</td>
-                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 17<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Seargent</strong>[cite: 2]</td>
-                                <td>Caprice[cite: 2]</td>
-                                <td>Item: 34<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 1060<br><small>Text: 4</small>[cite: 2]</td>
-                                <td>Item: 433<br><small>Text: 4</small>[cite: 2]</td>
-                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 229<br><small>Text: 4</small>[cite: 2]</td>
-                                <td>Item: 277<br><small>Text: 4</small>[cite: 2]</td>
-                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 17<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
-                            </tr>
-                            <tr>
-                                <td><strong>First Seargent</strong>[cite: 2]</td>
-                                <td>Ford Taurus[cite: 2]</td>
-                                <td>Item: 34<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 1060<br><small>Text: 4</small>[cite: 2]</td>
-                                <td>Item: 433<br><small>Text: 4</small>[cite: 2]</td>
-                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 229<br><small>Text: 5</small>[cite: 2]</td>
-                                <td>Item: 277<br><small>Text: 5</small>[cite: 2]</td>
-                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 17<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Staff Seargent</strong>[cite: 2]</td>
-                                <td>2018 Charger[cite: 2]</td>
-                                <td>Item: 34<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 1060<br><small>Text: 4</small>[cite: 2]</td>
-                                <td>Item: 433<br><small>Text: 4</small>[cite: 2]</td>
-                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 229<br><small>Text: 6</small>[cite: 2]</td>
-                                <td>Item: 277<br><small>Text: 6</small>[cite: 2]</td>
-                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 17<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
-                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+                <!-- قسم الرتب الأساسية -->
+                <section id="lspd-outfits" class="mb-5">
+                    <h4 class="text-primary border-bottom pb-2 mb-3">👕 أزياء ومركبات الرتب الأساسية</h4>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped text-center align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>الرتبة (Rank)</th>
+                                    <th>المركبة (Vehicle)</th>
+                                    <th>Shirt</th>
+                                    <th>Jackets</th>
+                                    <th>Legs</th>
+                                    <th>Body Armor</th>
+                                    <th>Bags / Parachute</th>
+                                    <th>Decals</th>
+                                    <th>Hands</th>
+                                    <th>Shoes</th>
+                                    <th>Scarf & Chains</th>
+                                    <th>Mask</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Solo Cadet</strong>[cite: 2]</td>
+                                    <td>Ford[cite: 2]</td>
+                                    <td>Item: 34<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 1062<br><small>Text: 3</small>[cite: 2]</td>
+                                    <td>Item: 433<br><small>Text: 4</small>[cite: 2]</td>
+                                    <td>Item: 201<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 77<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 21<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Officer I</strong>[cite: 2]</td>
+                                    <td>Ford[cite: 2]</td>
+                                    <td>Item: 377<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 1060<br><small>Text: 4</small>[cite: 2]</td>
+                                    <td>Item: 433<br><small>Text: 6</small>[cite: 2]</td>
+                                    <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 229<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 277<br><small>Text: 1</small>[cite: 2]</td>
+                                    <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 17<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Officer II</strong>[cite: 2]</td>
+                                    <td>Ford Taurus[cite: 2]</td>
+                                    <td>Item: 34<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 1060<br><small>Text: 4</small>[cite: 2]</td>
+                                    <td>Item: 433<br><small>Text: 4</small>[cite: 2]</td>
+                                    <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 229<br><small>Text: 1</small>[cite: 2]</td>
+                                    <td>Item: 277<br><small>Text: 2</small>[cite: 2]</td>
+                                    <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 17<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Officer III</strong>[cite: 2]</td>
+                                    <td>Charger[cite: 2]</td>
+                                    <td>Item: 34<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 1060<br><small>Text: 4</small>[cite: 2]</td>
+                                    <td>Item: 433<br><small>Text: 4</small>[cite: 2]</td>
+                                    <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 229<br><small>Text: 2</small>[cite: 2]</td>
+                                    <td>Item: 277<br><small>Text: 3</small>[cite: 2]</td>
+                                    <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 17<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Senior Officer</strong>[cite: 2]</td>
+                                    <td>2018 Tahoe[cite: 2]</td>
+                                    <td>Item: 34<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 1060<br><small>Text: 4</small>[cite: 2]</td>
+                                    <td>Item: 433<br><small>Text: 4</small>[cite: 2]</td>
+                                    <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 229<br><small>Text: 3</small>[cite: 2]</td>
+                                    <td>Item: 277<br><small>Text: 3</small>[cite: 2]</td>
+                                    <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 17<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Seargent</strong>[cite: 2]</td>
+                                    <td>Caprice[cite: 2]</td>
+                                    <td>Item: 34<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 1060<br><small>Text: 4</small>[cite: 2]</td>
+                                    <td>Item: 433<br><small>Text: 4</small>[cite: 2]</td>
+                                    <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 229<br><small>Text: 4</small>[cite: 2]</td>
+                                    <td>Item: 277<br><small>Text: 4</small>[cite: 2]</td>
+                                    <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 17<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>First Seargent</strong>[cite: 2]</td>
+                                    <td>Ford Taurus[cite: 2]</td>
+                                    <td>Item: 34<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 1060<br><small>Text: 4</small>[cite: 2]</td>
+                                    <td>Item: 433<br><small>Text: 4</small>[cite: 2]</td>
+                                    <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 229<br><small>Text: 5</small>[cite: 2]</td>
+                                    <td>Item: 277<br><small>Text: 5</small>[cite: 2]</td>
+                                    <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 17<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Staff Seargent</strong>[cite: 2]</td>
+                                    <td>2018 Charger[cite: 2]</td>
+                                    <td>Item: 34<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 1060<br><small>Text: 4</small>[cite: 2]</td>
+                                    <td>Item: 433<br><small>Text: 4</small>[cite: 2]</td>
+                                    <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 229<br><small>Text: 6</small>[cite: 2]</td>
+                                    <td>Item: 277<br><small>Text: 6</small>[cite: 2]</td>
+                                    <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 17<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                    <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
 
-            <!-- قسم الوحدات الخاصة (Wings Outfits) -->
-            <section id="lspd-special" class="mb-3">
-                <h4 class="text-warning border-bottom pb-2 mb-3">✈️ 🏍️ أزياء الوحدات الخاصة (Wings Outfits)</h4>
-                <div class="table-responsive">
-                    <table class="table table-bordered table-dark text-center align-middle">
-                        <thead>
-                            <tr class="table-secondary text-dark">
-                                <th>الوحدة (Unit)</th>
-                                <th>Shirt</th>
-                                <th>Jackets</th>
-                                <th>Legs</th>
-                                <th>Body Armor</th>
-                                <th>Bags / Parachute</th>
-                                <th>Hands</th>
-                                <th>Shoes</th>
-                                <th>Mask</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>AirShip (الوحدة الجوية)</strong></td>
-                                <td>Item: 15<br><small>Text: 0</small></td>
-                                <td>Item: 781<br><small>Text: 1</small></td>
-                                <td>Item: 417<br><small>Text: 0</small></td>
-                                <td>Item: 0<br><small>Text: 0</small></td>
-                                <td>Item: 0<br><small>Text: 0</small></td>
-                                <td>Item: 152<br><small>Text: 0</small></td>
-                                <td>Item: 18<br><small>Text: 0</small></td>
-                                <td>Item: 0<br><small>Text: 0</small></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Motorcycle (وحدة الدراجات)</strong></td>
-                                <td>Item: 15<br><small>Text: 0</small></td>
-                                <td>Item: 1051 / 1055<br><small>Text: 0</small></td>
-                                <td>Item: 442<br><small>Text: 0</small></td>
-                                <td>Item: 0<br><small>Text: 0</small></td>
-                                <td>Item: 0<br><small>Text: 0</small></td>
-                                <td>Item: 77<br><small>Text: 0</small></td>
-                                <td>Item: 21<br><small>Text: 0</small></td>
-                                <td>Item: 0<br><small>Text: 0</small></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+                <!-- قسم الوحدات الخاصة -->
+                <section id="lspd-special" class="mb-3">
+                    <h4 class="text-primary border-bottom pb-2 mb-3">✈️ 🏍️ أزياء الوحدات الخاصة (Wings Outfits)</h4>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped text-center align-middle">
+                            <thead class="table-info">
+                                <tr>
+                                    <th>الوحدة (Unit)</th>
+                                    <th>Shirt</th>
+                                    <th>Jackets</th>
+                                    <th>Legs</th>
+                                    <th>Body Armor</th>
+                                    <th>Bags / Parachute</th>
+                                    <th>Hands</th>
+                                    <th>Shoes</th>
+                                    <th>Mask</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>AirShip (الوحدة الجوية)</strong></td>
+                                    <td>Item: 15<br><small>Text: 0</small></td>
+                                    <td>Item: 781<br><small>Text: 1</small></td>
+                                    <td>Item: 417<br><small>Text: 0</small></td>
+                                    <td>Item: 0<br><small>Text: 0</small></td>
+                                    <td>Item: 0<br><small>Text: 0</small></td>
+                                    <td>Item: 152<br><small>Text: 0</small></td>
+                                    <td>Item: 18<br><small>Text: 0</small></td>
+                                    <td>Item: 0<br><small>Text: 0</small></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Motorcycle (وحدة الدراجات)</strong></td>
+                                    <td>Item: 15<br><small>Text: 0</small></td>
+                                    <td>Item: 1051 / 1055<br><small>Text: 0</small></td>
+                                    <td>Item: 442<br><small>Text: 0</small></td>
+                                    <td>Item: 0<br><small>Text: 0</small></td>
+                                    <td>Item: 0<br><small>Text: 0</small></td>
+                                    <td>Item: 77<br><small>Text: 0</small></td>
+                                    <td>Item: 21<br><small>Text: 0</small></td>
+                                    <td>Item: 0<br><small>Text: 0</small></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
 
+            </div>
         </div>
     </div>
 
-    <!-- 4. المحتوى الثانوي: صفحة القوانين العامة للسيرفر -->
+    <!-- 4. صفحة القوانين العامة -->
     <div class="container mt-4 content-section" id="section-rules">
-        <div class="p-4 bg-secondary rounded shadow-sm">
-            <h3 class="text-warning mb-3">📜 قوانين وأنظمة السيرفر العامة</h3>
-            <p class="text-light">هذه الصفحة مخصصة لعرض القوانين الأساسية لضمان متعة واستقرار اللعب لجميع الأعضاء.</p>
-            <ul class="list-group list-group-flush bg-dark text-light rounded">
-                <li class="list-group-item bg-dark text-light border-secondary">1. يمنع منعاً باتاً استغلال الأخطاء البرمجية (Glitches) ويجب إبلاغ الإدارة فوراً.</li>
-                <li class="list-group-item bg-dark text-light border-secondary">2. احترام جميع اللاعبين وطاقم الإدارة وعدم التلفظ بألفاظ نابية.</li>
-                <li class="list-group-item bg-dark text-light border-secondary">3. الالتزام بقواعد تقمص الأدوار (RP) في جميع المواقف والسيناريوهات الأمنية.</li>
+        <div class="p-4 bg-white rounded shadow-sm text-dark">
+            <h3 class="text-primary mb-3">📜 قوانين وأنظمة السيرفر العامة</h3>
+            <p class="text-secondary">هذه الصفحة مخصصة لعرض القوانين الأساسية لضمان متعة واستقرار اللعب لجميع الأعضاء.</p>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">1. يمنع منعاً باتاً استغلال الأخطاء البرمجية (Glitches) ويجب إبلاغ الإدارة فوراً.</li>
+                <li class="list-group-item">2. احترام جميع اللاعبين وطاقم الإدارة وعدم التلفظ بألفاظ نابية.</li>
+                <li class="list-group-item">3. الالتزام بقواعد تقمص الأدوار (RP) في جميع المواقف والسيناريوهات الأمنية.</li>
             </ul>
         </div>
     </div>
 
     <!-- 5. صفحة سجل التغييرات الإدارية (Audit Logs) -->
     <div class="container mt-4 content-section" id="section-logs">
-        <div class="p-4 bg-secondary rounded shadow-sm">
-            <h3 class="text-warning mb-3">📊 سجل التغييرات والتعديلات الإدارية</h3>
-            <p class="text-light small">يتم تسجيل كافة التعديلات التي يقوم بها المسؤولون مع إظهار التوقيت، اسم المسؤول، ونوع التعديل (قبل وبعد).</p>
+        <div class="p-4 bg-white rounded shadow-sm text-dark">
+            <h3 class="text-primary mb-3">📊 سجل التغييرات والتعديلات الإدارية</h3>
+            <p class="text-secondary small">يتم تسجيل كافة التعديلات التي يقوم بها المسؤولون مع إظهار التوقيت، اسم المسؤول، نوع التعديل، والمقارنة (قبل وبعد).</p>
             <div class="table-responsive">
-                <table class="table table-bordered table-dark text-center align-middle">
-                    <thead>
+                <table class="table table-bordered table-striped text-center align-middle">
+                    <thead class="table-dark">
                         <tr>
                             <th>التاريخ والوقت</th>
                             <th>اسم المسؤول</th>
@@ -352,7 +350,7 @@
 
     <!-- 6. شريط تغيير المنظور السفلي -->
     <div id="role-switcher-bar" class="d-flex justify-content-between align-items-center">
-        <span class="small text-warning fw-bold">🛠️ لوحة محاكاة المنظورات الإدارية:</span>
+        <span class="small text-warning fw-bold">🛠️ تبديل منظور المعاينة والصلاحيات:</span>
         <div class="btn-group btn-group-sm" role="group">
             <button type="button" class="btn btn-outline-warning" onclick="changeRole('Manager')">Manager</button>
             <button type="button" class="btn btn-outline-info" onclick="changeRole('Admin')">Admin</button>
@@ -364,22 +362,22 @@
     <!-- Bootstrap JS Bundle CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- 7. الجافاسكريبت المحدث لنظام التعديل والسجلات -->
+    <!-- 7. الجافاسكريبت -->
     <script>
-        // إعدادات جلسة المستخدم الحالي الافتراضية
         let currentSession = {
             username: "زائر (Visitor)",
-            role: "Visitor" // الخيارات: Manager, Admin, LSPD Admin, Visitor
+            role: "Visitor"
         };
 
         let contentBeforeEdit = "";
 
-        // دالة الانتقال بين الصفحات
+        // دالة إخفاء الترحيب والانتقال بين الصفحات
         function switchPage(pageName) {
-            document.getElementById("welcome-overlay").style.opacity = "0";
-            setTimeout(() => {
-                document.getElementById("welcome-overlay").style.display = "none";
-            }, 500);
+            const overlay = document.getElementById("welcome-overlay");
+            if (overlay) {
+                overlay.style.opacity = "0";
+                setTimeout(() => { overlay.style.display = "none"; }, 500);
+            }
 
             document.querySelectorAll(".content-section").forEach(sec => sec.classList.remove("active"));
             if (pageName === 'lspd') {
@@ -392,7 +390,7 @@
             }
         }
 
-        // تغيير الصلاحية والمنظور
+        // دالة تغيير المنظور والصلاحيات
         function changeRole(selectedRole) {
             currentSession.role = selectedRole;
             
@@ -412,15 +410,15 @@
             
             if (selectedRole === "Manager" || selectedRole === "LSPD Admin") {
                 adminControls.classList.remove("d-none");
-                alert("تم التحويل إلى منظور (" + currentSession.username + "): مسموح لك بالتعديل.");
+                alert("تم التحويل إلى منظور (" + currentSession.username + "): مسموح لك بتعديل المحتوى.");
             } else {
                 adminControls.classList.add("d-none");
                 cancelEditMode();
-                alert("تم التحويل إلى منظور (" + currentSession.username + "): عرض فقط.");
+                alert("تم التحويل إلى منظور (" + currentSession.username + "): عرض فقط بدون تعديل.");
             }
         }
 
-        // بدء التعديل وحفظ نسخة (قبل)
+        // تفعيل وضع التعديل
         function toggleEditMode() {
             const contentArea = document.getElementById("lspd-editable-content");
             const editBtn = document.getElementById("edit-btn");
@@ -429,11 +427,11 @@
             const isEditable = contentArea.getAttribute("contenteditable") === "true";
 
             if (!isEditable) {
-                // حفظ نسخة النص قبل التعديل للمقارنة لاحقاً
                 contentBeforeEdit = contentArea.innerHTML;
 
                 contentArea.setAttribute("contenteditable", "true");
-                contentArea.style.border = "2px dashed #f39c12";
+                contentArea.style.border = "2px dashed #ffc107";
+                contentArea.style.padding = "10px";
                 editBtn.classList.add("d-none");
                 saveBtn.classList.remove("d-none");
             }
@@ -442,40 +440,41 @@
         function cancelEditMode() {
             const contentArea = document.getElementById("lspd-editable-content");
             contentArea.setAttribute("contenteditable", "false");
-            contentArea.style.border = "1px solid #2c3e50";
+            contentArea.style.border = "none";
+            contentArea.style.padding = "0";
             document.getElementById("edit-btn").classList.remove("d-none");
             document.getElementById("save-btn").classList.add("d-none");
         }
 
-        // حفظ التعديلات وتسجيلها في السجل (Audit Log)
+        // حفظ التعديلات وتسجيلها بالسجل (الوقت، اسم الشخص، نوع التعديل، قبل وبعد)
         function saveContent() {
             const contentArea = document.getElementById("lspd-editable-content");
             contentArea.setAttribute("contenteditable", "false");
-            contentArea.style.border = "1px solid #2c3e50";
+            contentArea.style.border = "none";
+            contentArea.style.padding = "0";
             document.getElementById("edit-btn").classList.remove("d-none");
             document.getElementById("save-btn").classList.add("d-none");
 
             const contentAfterEdit = contentArea.innerHTML;
-            localStorage.setItem("server_lspd_content", contentAfterEdit);
+            localStorage.setItem("lspd_page_content", contentAfterEdit);
 
-            // إنشاء سجل جديد بالتغيير
+            // جلب الوقت والتاريخ الحالي
             const now = new Date();
             const timestamp = now.toLocaleDateString('ar-SA') + ' ' + now.toLocaleTimeString('ar-SA');
 
             const newLog = {
                 time: timestamp,
                 user: currentSession.username,
-                type: "تعديل جدول أزياء ومركبات LSPD",
-                before: contentBeforeEdit.length > 100 ? contentBeforeEdit.substring(0, 80) + "..." : contentBeforeEdit,
-                after: contentAfterEdit.length > 100 ? contentAfterEdit.substring(0, 80) + "..." : contentAfterEdit
+                type: "تعديل جدول ملابس ومركبات LSPD",
+                before: contentBeforeEdit.length > 80 ? contentBeforeEdit.substring(0, 70) + "..." : contentBeforeEdit,
+                after: contentAfterEdit.length > 80 ? contentAfterEdit.substring(0, 70) + "..." : contentAfterEdit
             };
 
-            // جلب السجلات القديمة وإضافة الجديد
             let logs = JSON.parse(localStorage.getItem("lspd_audit_logs") || "[]");
-            logs.unshift(newLog); // إضافة في البداية
+            logs.unshift(newLog);
             localStorage.setItem("lspd_audit_logs", JSON.stringify(logs));
 
-            alert("تم حفظ التعديلات وتسجيل التغيير بنجاح في سجل الإدارة!");
+            alert("تم حفظ التعديلات وتوثيقها في سجل التغييرات بنجاح!");
         }
 
         // عرض جدول السجلات
@@ -495,24 +494,23 @@
                         <td><small>${log.time}</small></td>
                         <td><span class="badge bg-warning text-dark">${log.user}</span></td>
                         <td>${log.type}</td>
-                        <td class="text-danger small text-start" style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(log.before)}"><strong>قبل:</strong> ${escapeHtml(log.before)}</td>
-                        <td class="text-success small text-start" style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(log.after)}"><strong>بعد:</strong> ${escapeHtml(log.after)}</td>
+                        <td class="text-danger small text-start" style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(log.before)}"><strong>قبل:</strong> ${escapeHtml(log.before)}</td>
+                        <td class="text-success small text-start" style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(log.after)}"><strong>بعد:</strong> ${escapeHtml(log.after)}</td>
                     </tr>
                 `;
             });
             tbody.innerHTML = html;
         }
 
-        // مساعدة لتفادي مشاكل الأكواد داخل الـ Title
         function escapeHtml(text) {
             return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
         }
 
-        // استرجاع البيانات المحفوظة عند التحميل إن وجدت
+        // استرجاع المحتوى القديم عند التحميل إن وجد
         document.addEventListener("DOMContentLoaded", function () {
-            const saved = localStorage.getItem("server_lspd_content");
-            if (saved) {
-                document.getElementById("lspd-editable-content").innerHTML = saved;
+            const savedContent = localStorage.getItem("lspd_page_content");
+            if (savedContent) {
+                document.getElementById("lspd-editable-content").innerHTML = savedContent;
             }
         });
     </script>
