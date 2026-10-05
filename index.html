@@ -76,17 +76,17 @@
             <!-- قائمة التبويبات والتصنيفات -->
             <nav class="space-y-1.5 overflow-y-auto max-h-[calc(100vh-280px)] pr-1" id="sidebar-nav">
                 <button onclick="switchTab('all')" id="btn-all" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-amber-400 bg-amber-500/10 border border-amber-500/20">
-                    <i data-lucide="layers" class="w-4 h-4 text-amber-400"></i>
+                    <span class="text-base">📋</span>
                     جميع القوانين والأنظمة
                 </button>
 
                 <button onclick="switchTab('favorites')" id="btn-favorites" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-yellow-400 hover:bg-slate-800">
-                    <i data-lucide="star" class="w-4 h-4 text-yellow-400 fill-yellow-400"></i>
-                    المفضلة ⭐
+                    <span class="text-base">⭐</span>
+                    المفضلة
                 </button>
 
                 <button onclick="switchTab('official-links')" id="btn-official-links" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-cyan-400 hover:bg-slate-800">
-                    <i data-lucide="link" class="w-4 h-4 text-cyan-400"></i>
+                    <span class="text-base">🔗</span>
                     الروابط الرسمية
                 </button>
 
@@ -100,21 +100,21 @@
                 <!-- أدوات خاصة بالمنجر والأدمن -->
                 <div id="manager-tools" class="hidden space-y-1.5">
                     <button onclick="switchTab('audit-logs')" id="btn-audit-logs" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20">
-                        <i data-lucide="file-text" class="w-4 h-4 text-emerald-400"></i>
+                        <span class="text-base">📜</span>
                         سجلات التعديلات (اللوقات)
                     </button>
 
                     <button onclick="openManageCatsModal()" class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-purple-300 bg-purple-600/10 hover:bg-purple-600/20 border border-purple-500/30">
                         <span class="flex items-center gap-2">
-                            <i data-lucide="settings" class="w-4 h-4 text-purple-400"></i>
-                            إدارة التصنيفات
+                            <span class="text-base">⚙️</span>
+                            إدارة التصنيفات والإيموجي
                         </span>
                         <span class="text-[9px] px-1.5 py-0.5 bg-purple-500/20 rounded text-purple-300 font-black">MANAGER</span>
                     </button>
 
                     <button onclick="switchTab('manager-panel')" id="btn-manager-panel" class="nav-btn w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20">
                         <span class="flex items-center gap-2">
-                            <i data-lucide="crown" class="w-4 h-4 text-amber-400"></i>
+                            <span class="text-base">👑</span>
                             إدارة الحسابات
                         </span>
                         <span class="text-[9px] px-1.5 py-0.5 bg-amber-500/20 rounded text-amber-300 font-extrabold">MANAGER</span>
@@ -152,7 +152,7 @@
             
             <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
                 <button id="add-cat-btn" onclick="openAddCatModal()" class="hidden bg-purple-600 hover:bg-purple-700 text-white font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-lg shadow-purple-600/30">
-                    <i data-lucide="folder-plus" class="w-4 h-4"></i> تصنيف جديد
+                    <span class="text-sm">➕</span> تصنيف جديد
                 </button>
                 <button id="add-rule-btn" onclick="openAddRuleModal()" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-600/30">
                     <i data-lucide="plus-circle" class="w-4 h-4"></i> إضافة بند جديد
@@ -192,24 +192,21 @@
             <!-- قسم الروابط الرسمية (Tab) -->
             <section id="sec-official-links" class="tab-content space-y-6 hidden">
                 <div class="border-b border-slate-800 pb-3 flex items-center justify-between">
-                    <h2 class="text-xl md:text-2xl font-bold text-cyan-400 flex items-center gap-2"><i data-lucide="link"></i> الروابط الرسمية لسيرفر LAW CITY CFW</h2>
+                    <h2 class="text-xl md:text-2xl font-bold text-cyan-400 flex items-center gap-2">🔗 الروابط الرسمية لسيرفر LAW CITY CFW</h2>
                     <button id="add-link-main-btn" onclick="openAddLinkModal()" class="hidden bg-cyan-600 hover:bg-cyan-700 text-white font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5">
-                        <i data-lucide="plus"></i> إضافة رابط رسمي
+                        <span>➕</span> إضافة رابط رسمي
                     </button>
                 </div>
-                <div id="official-links-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- تعبئة الروابط ديناميكياً -->
-                </div>
+                <div id="official-links-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
             </section>
 
             <!-- قسم سجلات التعديلات (اللوقات Audit Logs) -->
             <section id="sec-audit-logs" class="tab-content space-y-6 hidden">
                 <div class="border-b border-slate-800 pb-3">
-                    <h2 class="text-xl md:text-2xl font-bold text-emerald-400 flex items-center gap-2"><i data-lucide="file-text"></i> سجلات التعديلات والعمليات (Audit Logs)</h2>
+                    <h2 class="text-xl md:text-2xl font-bold text-emerald-400 flex items-center gap-2">📜 سجلات التعديلات والعمليات (Audit Logs)</h2>
                     <p class="text-xs text-slate-400 mt-1">تتبع كافة عمليات الإضافة، التعديل، والحذف مع تفاصيل البيانات السابقة والجديدة.</p>
                 </div>
 
-                <!-- أدوات التصفية الخاصة باللوقات -->
                 <div class="custom-card p-4 rounded-2xl border flex flex-col sm:flex-row gap-3 items-center justify-between">
                     <input type="text" id="searchAudit" oninput="renderAuditTable()" placeholder="ابحث في السجلات (اسم، بند، نص)..." class="w-full sm:w-72 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
                     <select id="filterAuditPerson" onchange="renderAuditTable()" class="w-full sm:w-48 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
@@ -236,7 +233,7 @@
             <!-- لوحة المنجر لتصنيف الأعضاء والحسابات -->
             <section id="sec-manager-panel" class="tab-content space-y-6 hidden">
                 <div class="border-b border-slate-800 pb-3 flex items-center justify-between">
-                    <h2 class="text-xl md:text-2xl font-bold text-amber-400 flex items-center gap-2"><i data-lucide="crown"></i> لوحة إدارة وتصنيف المسجلين بالمنصة</h2>
+                    <h2 class="text-xl md:text-2xl font-bold text-amber-400 flex items-center gap-2">👑 لوحة إدارة وتصنيف المسجلين بالمنصة</h2>
                 </div>
                 <div class="custom-card border rounded-2xl p-4 overflow-x-auto">
                     <table class="w-full text-right text-xs">
@@ -262,7 +259,7 @@
     <!-- Modal إضافة / تعديل رابط رسمي -->
     <div id="link-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-6 space-y-4 shadow-2xl">
-            <h3 class="text-lg font-bold text-cyan-400 flex items-center gap-2"><i data-lucide="link"></i> إضافة رابط رسمي جديد</h3>
+            <h3 class="text-lg font-bold text-cyan-400 flex items-center gap-2">🔗 إضافة رابط رسمي جديد</h3>
             <input type="hidden" id="link-edit-id" value="">
             <div>
                 <label class="text-xs text-slate-400 block mb-1">عنوان الرابط</label>
@@ -279,39 +276,58 @@
         </div>
     </div>
 
-    <!-- Modal إدارة والتعديل على التصنيفات -->
+    <!-- Modal إدارة والتعديل على التصنيفات والإيموجي -->
     <div id="manage-cats-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl p-6 space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-lg font-bold text-purple-400 flex items-center gap-2">
-                    <i data-lucide="settings"></i> إدارة والتعديل على التصنيفات
-                </h3>
+                <h3 class="text-lg font-bold text-purple-400 flex items-center gap-2">⚙️ إدارة التصنيفات والإيموجي</h3>
                 <button onclick="closeManageCatsModal()" class="text-slate-400 hover:text-white"><i data-lucide="x"></i></button>
             </div>
             <div id="cats-management-list" class="space-y-3 max-h-80 overflow-y-auto pr-1"></div>
             <button onclick="openAddCatModal(); closeManageCatsModal();" class="w-full py-2 bg-purple-600/20 text-purple-300 hover:bg-purple-600 hover:text-white border border-purple-500/30 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2">
-                <i data-lucide="plus-circle" class="w-4 h-4"></i> إضافة تصنيف جديد
+                <span>➕</span> إضافة تصنيف جديد
             </button>
         </div>
     </div>
 
-    <!-- Modal إضافة / تعديل تصنيف -->
+    <!-- Modal إضافة / تعديل تصنيف مع إيموجي خارجي -->
     <div id="cat-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden p-4">
         <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-6 space-y-4 shadow-2xl">
-            <h3 id="cat-modal-title" class="text-lg font-bold text-purple-400 flex items-center gap-2">
-                <i data-lucide="folder-plus"></i> إضافة / تعديل تصنيف
-            </h3>
+            <h3 id="cat-modal-title" class="text-lg font-bold text-purple-400 flex items-center gap-2">📂 إضافة / تعديل تصنيف</h3>
             <input type="hidden" id="edit-cat-original-id" value="">
+            
             <div>
                 <label class="text-xs text-slate-400 block mb-1">اسم التصنيف (بالعربي)</label>
                 <input type="text" id="cat-title" placeholder="e.g. قوانين الطيران" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
             </div>
+
             <div>
-                <label class="text-xs text-slate-400 block mb-1">المعرف البرمجي (بالإنجليزية)</label>
+                <label class="text-xs text-slate-400 block mb-1">المعرف البرمجي (بالإنجليزية بدون مسافات)</label>
                 <input type="text" id="cat-id" placeholder="e.g. aviation_rules" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
             </div>
+
+            <div>
+                <label class="text-xs text-slate-400 block mb-1">الإيموجي الخارجي للتصنيف (Emoji)</label>
+                <div class="flex items-center gap-2">
+                    <input type="text" id="cat-emoji" value="📁" maxlength="4" class="w-16 text-center bg-slate-950 border border-slate-800 rounded-xl py-2 text-lg text-white">
+                    <span class="text-[11px] text-slate-400">اختر إيموجي جاهز أو اكتب أي إيموجي من لوحة المفاتيح:</span>
+                </div>
+                <!-- أزرار إيموجي سريعة -->
+                <div class="flex flex-wrap gap-1.5 mt-2">
+                    <button type="button" onclick="setCatEmoji('⚖️')" class="p-1.5 bg-slate-800 hover:bg-slate-700 rounded text-sm">⚖️</button>
+                    <button type="button" onclick="setCatEmoji('🚔')" class="p-1.5 bg-slate-800 hover:bg-slate-700 rounded text-sm">🚔</button>
+                    <button type="button" onclick="setCatEmoji('🚨')" class="p-1.5 bg-slate-800 hover:bg-slate-700 rounded text-sm">🚨</button>
+                    <button type="button" onclick="setCatEmoji('📖')" class="p-1.5 bg-slate-800 hover:bg-slate-700 rounded text-sm">📖</button>
+                    <button type="button" onclick="setCatEmoji('🚗')" class="p-1.5 bg-slate-800 hover:bg-slate-700 rounded text-sm">🚗</button>
+                    <button type="button" onclick="setCatEmoji('🔫')" class="p-1.5 bg-slate-800 hover:bg-slate-700 rounded text-sm">🔫</button>
+                    <button type="button" onclick="setCatEmoji('💼')" class="p-1.5 bg-slate-800 hover:bg-slate-700 rounded text-sm">💼</button>
+                    <button type="button" onclick="setCatEmoji('⭐')" class="p-1.5 bg-slate-800 hover:bg-slate-700 rounded text-sm">⭐</button>
+                    <button type="button" onclick="setCatEmoji('🛡️')" class="p-1.5 bg-slate-800 hover:bg-slate-700 rounded text-sm">🛡️</button>
+                </div>
+            </div>
+
             <div class="flex gap-2 pt-2">
-                <button onclick="saveCategory()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-xl text-sm">حفظ</button>
+                <button onclick="saveCategory()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-xl text-sm">حفظ التصنيف</button>
                 <button onclick="closeAddCatModal()" class="px-4 bg-slate-800 text-slate-300 rounded-xl text-sm">إلغاء</button>
             </div>
         </div>
@@ -337,11 +353,11 @@
                 
                 <div class="flex items-center gap-2 pt-1">
                     <input type="checkbox" id="remember-me" class="rounded bg-slate-950 border-slate-800 text-indigo-600 focus:ring-0 w-4 h-4">
-                    <label for="remember-me" class="text-xs text-slate-300 font-bold cursor-pointer">حفظ تسجيل الدخول (عدم الخروج التلقائي)</label>
+                    <label for="remember-me" class="text-xs text-slate-300 font-bold cursor-pointer">حفظ تسجيل الدخول</label>
                 </div>
 
                 <button onclick="handleLogin()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30">تسجيل الدخول</button>
-                <p class="text-xs text-center text-slate-400 pt-2">لا تمتلك حساباً بعد؟ <button onclick="toggleAuthMode('signup')" class="text-indigo-400 font-bold underline">إنشاء حساب جديد</button></p>
+                <p class="text-xs text-center text-slate-400 pt-2">لا تمتلك حساباً؟ <button onclick="toggleAuthMode('signup')" class="text-indigo-400 font-bold underline">إنشاء حساب جديد</button></p>
             </div>
 
             <div id="signup-form" class="space-y-3 hidden">
@@ -350,7 +366,7 @@
                     <input type="text" id="signup-username" placeholder="e.g. Faisal_CFW" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
                 </div>
                 <div>
-                    <label class="text-xs text-slate-400 block mb-1">اسم حساب الديسكورد (Discord Username) *</label>
+                    <label class="text-xs text-slate-400 block mb-1">اسم حساب الديسكورد *</label>
                     <input type="text" id="signup-discord" placeholder="e.g. user_discord" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
                 </div>
                 <div>
@@ -374,7 +390,6 @@
                             <option value="lspd">👮‍♂️ LSPD</option>
                             <option value="ems">🚑 مسعف</option>
                             <option value="gang">💀 عصابة</option>
-                            <option value="citizen">👤 مواطن</option>
                         </select>
                     </div>
                 </div>
@@ -436,12 +451,12 @@
 
     <script>
         let categoriesData = JSON.parse(localStorage.getItem('lawcity_categories')) || [
-            { id: "rp_rules", title: "أنظمة الرول بلاي (RP)", icon: "book-open" },
-            { id: "criminal_law", title: "قانون العقوبات والسرقات", icon: "gavel" },
-            { id: "police_codes", title: "أكواد وإشارات اللاسلكي", icon: "radio" },
-            { id: "police_protocols", title: "بروتوكولات وواجبات الأمن", icon: "shield-alert" },
-            { id: "traffic_law", title: "قوانين المرور والمركبات", icon: "car" },
-            { id: "promotions", title: "سلم الرتب والترقيات", icon: "award" }
+            { id: "rp_rules", title: "أنظمة الرول بلاي (RP)", emoji: "📖" },
+            { id: "criminal_law", title: "قانون العقوبات والسرقات", emoji: "⚖️" },
+            { id: "police_codes", title: "أكواد وإشارات اللاسلكي", emoji: "🚨" },
+            { id: "police_protocols", title: "بروتوكولات وواجبات الأمن", emoji: "🛡️" },
+            { id: "traffic_law", title: "قوانين المرور والمركبات", emoji: "🚗" },
+            { id: "promotions", title: "سلم الرتب والترقيات", emoji: "⭐" }
         ];
 
         let accounts = JSON.parse(localStorage.getItem('lawcity_accounts')) || [
@@ -449,11 +464,7 @@
         ];
 
         let userFavorites = JSON.parse(localStorage.getItem('lawcity_favorites')) || [];
-        
-        // سجلات اللوقات (Audit Logs)
         let auditLogs = JSON.parse(localStorage.getItem('lawcity_audit_logs')) || [];
-
-        // الروابط الرسمية
         let officialLinks = JSON.parse(localStorage.getItem('lawcity_official_links')) || [
             { id: 1, title: "ديسكورد سيرفر LAW CITY CFW", url: "https://discord.gg/lawcitycfw" },
             { id: 2, title: "رابط التقديم على الوظائف العسكرية", url: "https://forms.gle/example" }
@@ -462,7 +473,7 @@
         let currentUser = null;
         let currentTab = 'all';
         let selectedSeverities = [];
-        let isVisitorView = false; // وضع معاينة الزائر
+        let isVisitorView = false;
 
         let defaultData = [
             { id: 101, code: "CFW-RP-01", category: "rp_rules", text: "قدسية وحماية الحياة (Value Your Life)", penalty: "الانصياع الفوري عند التهديد المباشر بالسلاح لحماية الحياة.", severity: "high" },
@@ -484,12 +495,11 @@
             }
         }
 
-        // دالة تسجيل العمليات في السجلات (اللوقات)
         function logAuditAction(type, beforeStr, afterStr) {
             const now = new Date().toLocaleString('ar-SA');
             const logItem = {
                 id: Date.now(),
-                type: type, // 'إضافة', 'تعديل', 'حذف'
+                type: type,
                 person: currentUser ? currentUser.username : 'مواطن',
                 before: beforeStr || 'لا يوجد',
                 after: afterStr || 'لا يوجد',
@@ -505,13 +515,13 @@
             
             container.innerHTML = categoriesData.map(c => `
                 <button onclick="switchTab('${c.id}')" id="btn-${c.id}" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:bg-slate-800 hover:text-white">
-                    <i data-lucide="${c.icon || 'folder'}" class="w-4 h-4"></i>
+                    <span class="text-base">${c.emoji || '📁'}</span>
                     ${c.title}
                 </button>
             `).join('');
 
             selectCat.innerHTML = categoriesData.map(c => `
-                <option value="${c.id}">${c.title}</option>
+                <option value="${c.id}">${c.emoji || '📁'} ${c.title}</option>
             `).join('');
 
             lucide.createIcons();
@@ -528,7 +538,6 @@
             const activeBtn = document.getElementById(`btn-${tabId}`);
             if(activeBtn) activeBtn.classList.add('bg-amber-500/10', 'text-amber-400', 'border-amber-500/20');
 
-            // إظهار أو إخفاء الحاويات بحسب التبويب
             document.getElementById('rules-container').classList.add('hidden');
             document.getElementById('filter-bar-section').classList.add('hidden');
             document.getElementById('sec-manager-panel').classList.add('hidden');
@@ -552,7 +561,6 @@
             }
         }
 
-        // --- عرض الروابط الرسمية وإدارتها للمنجر ---
         function renderOfficialLinks() {
             const container = document.getElementById('official-links-container');
             const addBtn = document.getElementById('add-link-main-btn');
@@ -572,7 +580,7 @@
                 <div class="custom-card border rounded-2xl p-5 flex flex-col justify-between gap-4 border-slate-800 hover:border-cyan-500/50 transition-all">
                     <div class="space-y-2">
                         <div class="flex items-center gap-2 text-cyan-400">
-                            <i data-lucide="external-link" class="w-5 h-5"></i>
+                            <span class="text-lg">🔗</span>
                             <h3 class="font-bold text-sm text-white">${l.title}</h3>
                         </div>
                         <p class="text-xs text-slate-400 font-mono break-all">${l.url}</p>
@@ -582,9 +590,7 @@
                             زيارة الرابط <i data-lucide="arrow-up-left" class="w-3.5 h-3.5"></i>
                         </a>
                         ${currentUser && currentUser.role === 'manager' && !isVisitorView ? `
-                            <div class="flex gap-1">
-                                <button onclick="deleteOfficialLink(${l.id})" class="p-2 bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white rounded-xl border border-rose-500/30"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                            </div>
+                            <button onclick="deleteOfficialLink(${l.id})" class="p-2 bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white rounded-xl border border-rose-500/30"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         ` : ''}
                     </div>
                 </div>
@@ -602,7 +608,7 @@
         function saveOfficialLink() {
             const title = document.getElementById('link-title').value.trim();
             const url = document.getElementById('link-url').value.trim();
-            if(!title || !url) return alert('يرجى إدخال عنوان الرابط والرابط نفسه');
+            if(!title || !url) return alert('يرجى إدخال عنوان الرابط والـ URL');
 
             officialLinks.push({ id: Date.now(), title, url });
             localStorage.setItem('lawcity_official_links', JSON.stringify(officialLinks));
@@ -623,7 +629,6 @@
             }
         }
 
-        // --- سجلات اللوقات وتصفيتها ---
         function initAuditFilterPersons() {
             const select = document.getElementById('filterAuditPerson');
             const persons = [...new Set(auditLogs.map(l => l.person))];
@@ -661,7 +666,6 @@
             `).join('');
         }
 
-        // --- زر معاينة الزائر للمنجر والأدمن ---
         function toggleVisitorPerspective() {
             isVisitorView = !isVisitorView;
             const btn = document.getElementById('visitor-view-toggle');
@@ -670,7 +674,6 @@
                 btn.innerHTML = `<i data-lucide="eye-off" class="w-3.5 h-3.5"></i> الخروج من معاينة الزائر`;
                 btn.className = "w-full py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-lg";
                 
-                // إخفاء أدوات الإدارة
                 document.getElementById('manager-tools').classList.add('hidden');
                 document.getElementById('add-rule-btn').classList.add('hidden');
                 document.getElementById('add-cat-btn').classList.add('hidden');
@@ -682,7 +685,7 @@
                 btn.innerHTML = `<i data-lucide="eye" class="w-3.5 h-3.5"></i> معاينة بمنظور الزائر`;
                 btn.className = "w-full py-1.5 bg-rose-600/20 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/40 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5";
                 
-                updateAuthUI(); // استرجاع الأزرار بحسب الرتبة الحقيقية
+                updateAuthUI();
             }
             renderRules(rulesData);
             renderOfficialLinks();
@@ -765,65 +768,73 @@
             lucide.createIcons();
         }
 
-        // إدارة وتعديل التصنيفات
+        // --- إدارة وتعديل التصنيفات مع الإيموجي الخارجي ---
         function openManageCatsModal() {
             const container = document.getElementById('cats-management-list');
             container.innerHTML = categoriesData.map(c => `
                 <div class="flex items-center justify-between p-3 bg-slate-950 border border-slate-800 rounded-xl">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="${c.icon || 'folder'}" class="w-4 h-4 text-purple-400"></i>
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-lg">${c.emoji || '📁'}</span>
                         <span class="text-xs font-bold text-white">${c.title}</span>
                     </div>
                     <div class="flex items-center gap-1">
-                        <button onclick="openEditCatModal('${c.id}', '${c.title}')" class="p-1.5 bg-amber-500/10 text-amber-400 rounded-lg text-xs font-bold">تعديل</button>
+                        <button onclick="openEditCatModal('${c.id}', '${c.title}', '${c.emoji || '📁'}')" class="p-1.5 bg-amber-500/10 text-amber-400 rounded-lg text-xs font-bold">تعديل</button>
                         <button onclick="deleteCategory('${c.id}')" class="p-1.5 bg-rose-500/10 text-rose-400 rounded-lg text-xs font-bold">حذف</button>
                     </div>
                 </div>
             `).join('');
-            lucide.createIcons();
             document.getElementById('manage-cats-modal').classList.remove('hidden');
         }
         function closeManageCatsModal() { document.getElementById('manage-cats-modal').classList.add('hidden'); }
+
+        function setCatEmoji(emojiChar) {
+            document.getElementById('cat-emoji').value = emojiChar;
+        }
 
         function openAddCatModal() {
             document.getElementById('edit-cat-original-id').value = '';
             document.getElementById('cat-title').value = '';
             document.getElementById('cat-id').value = '';
+            document.getElementById('cat-emoji').value = '📁';
             document.getElementById('cat-modal-title').innerText = 'إضافة تصنيف جديد';
             document.getElementById('cat-modal').classList.remove('hidden');
         }
-        function openEditCatModal(id, title) {
+
+        function openEditCatModal(id, title, emoji) {
             document.getElementById('edit-cat-original-id').value = id;
             document.getElementById('cat-title').value = title;
             document.getElementById('cat-id').value = id;
-            document.getElementById('cat-modal-title').innerText = 'تعديل التصنيف';
+            document.getElementById('cat-emoji').value = emoji || '📁';
+            document.getElementById('cat-modal-title').innerText = 'تعديل التصنيف والإيموجي';
             document.getElementById('manage-cats-modal').classList.add('hidden');
             document.getElementById('cat-modal').classList.remove('hidden');
         }
+
         function closeAddCatModal() { document.getElementById('cat-modal').classList.add('hidden'); }
 
         function saveCategory() {
             const originalId = document.getElementById('edit-cat-original-id').value;
             const title = document.getElementById('cat-title').value.trim();
             const id = document.getElementById('cat-id').value.trim().toLowerCase();
+            const emoji = document.getElementById('cat-emoji').value.trim() || '📁';
 
-            if (!title || !id) return alert('يرجى ملء الحقول');
+            if (!title || !id) return alert('يرجى ملء اسم التصنيف والمعرف');
 
             if (originalId) {
                 const idx = categoriesData.findIndex(c => c.id === originalId);
                 if (idx !== -1) {
-                    logAuditAction('تعديل', `تصنيف: ${categoriesData[idx].title}`, `تصنيف: ${title}`);
-                    categoriesData[idx] = { id, title, icon: categoriesData[idx].icon || 'folder' };
+                    logAuditAction('تعديل', `تصنيف: ${categoriesData[idx].title}`, `تصنيف: ${title} (${emoji})`);
+                    categoriesData[idx] = { id, title, emoji };
                 }
             } else {
-                categoriesData.push({ id, title, icon: 'folder' });
-                logAuditAction('إضافة', '-', `تصنيف جديد: ${title}`);
+                categoriesData.push({ id, title, emoji });
+                logAuditAction('إضافة', '-', `تصنيف جديد: ${title} (${emoji})`);
             }
 
             localStorage.setItem('lawcity_categories', JSON.stringify(categoriesData));
             renderCategoriesNav();
             closeAddCatModal();
-            showToast('تم حفظ التصنيف!');
+            showToast('تم حفظ التصنيف والإيموجي بنجاح!');
         }
 
         function deleteCategory(id) {
