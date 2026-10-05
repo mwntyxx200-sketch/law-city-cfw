@@ -1,748 +1,309 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="theme-default text-size-md">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MT CITY | Mystery Town Laws & Portal</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
-        body { font-family: 'Cairo', sans-serif; }
-        
-        .theme-default {
-            --bg-main: #020617;
-            --bg-card: rgba(15, 23, 42, 0.75);
-            --border-color: #1e293b;
-        }
-
-        body {
-            background-color: var(--bg-main);
-            transition: background-color 0.3s ease;
-        }
-
-        .custom-card {
-            background-color: var(--bg-card);
-            border-color: var(--border-color);
-            backdrop-filter: blur(12px);
-        }
-
-        .glass-header {
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(16px);
-        }
-
-        .filter-btn-active {
-            background-color: #312e81 !important;
-            border-color: #6366f1 !important;
-            color: #ffffff !important;
-            box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
-        }
-
-        @media print {
-            aside, header, .no-print, nav.mobile-bottom-nav { display: none !important; }
-            main { width: 100% !important; margin: 0 !important; }
-            body { background: #fff !important; color: #000 !important; }
-            .custom-card { background: #fff !important; border: 1px solid #ccc !important; color: #000 !important; }
-        }
-    </style>
+    <title>قطاع العساكر - LSPD</title>
+    <!-- Bootstrap 5 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="text-slate-100 min-h-screen flex flex-col md:flex-row relative overflow-x-hidden pb-20 md:pb-0">
+<body class="bg-light">
 
-    <!-- إشعار النسخ والإجراءات -->
-    <div id="copy-toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-slate-900/90 text-slate-100 border border-indigo-500/40 px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md flex items-center gap-3 text-xs font-bold transition-all duration-300 opacity-0 pointer-events-none -translate-y-6">
-        <div class="p-1.5 bg-indigo-500/20 text-indigo-400 rounded-lg">
-            <i data-lucide="check-circle-2" class="w-4 h-4"></i>
-        </div>
-        <span id="toast-msg">تمت العملية بنجاح!</span>
-    </div>
-
-    <!-- Sidebar التنقل الجانبي -->
-    <aside class="hidden md:flex w-72 bg-slate-900 border-l border-slate-800 p-5 flex-col justify-between shrink-0 z-20">
-        <div class="space-y-6">
-            <!-- اللوجو واسم السيرفر -->
-            <div class="flex items-center gap-3 px-2">
-                <div class="p-3 bg-gradient-to-tr from-indigo-600 to-violet-600 rounded-xl text-white shadow-lg shadow-indigo-500/30">
-                    <i data-lucide="shield" class="w-7 h-7"></i>
-                </div>
-                <div>
-                    <h1 class="font-black text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-indigo-300">MYSTERY TOWN (MT)</h1>
-                    <p class="text-[11px] font-bold text-slate-400" id="user-role-badge">الرتبة: زائر</p>
-                </div>
-            </div>
-
-            <!-- قائمة التنقل -->
-            <nav class="space-y-1.5 overflow-y-auto max-h-[calc(100vh-280px)] pr-1" id="sidebar-nav">
-                <button onclick="switchTab('all')" id="btn-all" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-amber-400 bg-amber-500/10 border border-amber-500/20">
-                    <i data-lucide="layers" class="w-4 h-4 text-amber-400"></i>
-                    الكل (جميع القوانين)
-                </button>
-
-                <!-- تبويب المفضلة الشخصية -->
-                <button onclick="switchTab('favorites')" id="btn-favorites" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-yellow-400 hover:bg-slate-800">
-                    <i data-lucide="star" class="w-4 h-4 text-yellow-400 fill-yellow-400"></i>
-                    المفضلة ⭐ (خاص بك)
-                </button>
-
-                <hr class="border-slate-800 my-2">
-
-                <!-- تصنيفات القوانين الديناميكية -->
-                <div id="dynamic-categories-nav" class="space-y-1.5">
-                    <!-- سيتم توليد التصنيفات هنا تلقائياً -->
-                </div>
-
-                <hr class="border-slate-800 my-2">
-
-                <button onclick="switchTab('manager-panel')" id="btn-manager-panel" class="nav-btn hidden w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20">
-                    <span class="flex items-center gap-2">
-                        <i data-lucide="crown" class="w-4 h-4 text-amber-400"></i>
-                        إدارة الحسابات
-                    </span>
-                    <span class="text-[9px] px-1.5 py-0.5 bg-amber-500/20 rounded text-amber-300 font-extrabold">MANAGER</span>
-                </button>
-            </nav>
-        </div>
-
-        <div class="pt-4 border-t border-slate-800 space-y-3">
-            <div class="flex items-center justify-between text-xs text-slate-400">
-                <span>المستخدم:</span>
-                <span id="current-user-name" class="font-bold text-white">زائر</span>
-            </div>
-            <button id="auth-btn" onclick="openAuthModal()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-xs font-bold rounded-lg text-white border border-indigo-500 transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30">
-                <i data-lucide="log-in" class="w-4 h-4"></i> تسجيل الدخول
+    <!-- 1. شريط التنقل العلوي (Navbar) -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">موقع السيرفر</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
             </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">الرئيسية</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">القوانين العامة</a>
+                    </li>
+                    <!-- قائمة قطاع العساكر المضافة -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-warning fw-bold" href="#" id="lspdDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            🛡️ قطاع العساكر (LSPD)
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="lspdDropdown">
+                            <li><a class="dropdown-item" href="#lspd-outfits">أزياء وتجهيزات الرتب</a></li>
+                            <li><a class="dropdown-item" href="#lspd-special">الوحدات الخاصة</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </aside>
-
-    <!-- شريط الجوال السفلي -->
-    <nav class="mobile-bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 border-t border-slate-800 px-4 py-2 flex items-center justify-around backdrop-blur-lg">
-        <button onclick="switchTab('all')" class="flex flex-col items-center gap-1 text-[10px] font-bold text-amber-400">
-            <i data-lucide="layers" class="w-5 h-5"></i>
-            <span>الكل</span>
-        </button>
-        <button onclick="switchTab('favorites')" class="flex flex-col items-center gap-1 text-[10px] font-bold text-yellow-400">
-            <i data-lucide="star" class="w-5 h-5 fill-yellow-400"></i>
-            <span>المفضلة</span>
-        </button>
-        <button onclick="switchTab('police_codes')" class="flex flex-col items-center gap-1 text-[10px] font-bold text-cyan-400">
-            <i data-lucide="radio" class="w-5 h-5"></i>
-            <span>الأكواد</span>
-        </button>
-        <button onclick="openAuthModal()" class="flex flex-col items-center gap-1 text-[10px] font-bold text-indigo-400">
-            <i data-lucide="user" class="w-5 h-5"></i>
-            <span>الحساب</span>
-        </button>
     </nav>
 
-    <!-- المحتوى الرئيسي -->
-    <main class="flex-1 flex flex-col min-w-0">
-        
-        <header class="sticky top-0 z-30 glass-header border-b border-slate-800/80 px-4 md:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="relative w-full max-w-lg">
-                <i data-lucide="search" class="w-5 h-5 absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input type="text" id="searchInput" oninput="applyFilters()" placeholder="ابحث باسم القانون، الكود، التهمة e.g. 10-20, سرقة البنك..." 
-                       class="w-full bg-slate-900/90 border border-slate-700/60 rounded-xl pr-11 pl-10 py-2.5 text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-all">
-            </div>
+    <!-- 2. محتوى صفحة العساكر الرئيسي -->
+    <div class="container mt-4" id="lspd-section">
+        <!-- شريط التحكم الإداري -->
+        <div class="d-flex justify-content-between align-items-center mb-3 p-3 bg-dark text-white rounded shadow-sm">
+            <h3 class="m-0 text-warning">🛡️ الدليل الموحد لملابس ومركبات قطاع LSPD</h3>
             
-            <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
-                <button id="add-cat-btn" onclick="openAddCatModal()" class="hidden bg-purple-600 hover:bg-purple-700 text-white font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-lg shadow-purple-600/30">
-                    <i data-lucide="folder-plus" class="w-4 h-4"></i> إضافة تصنيف
-                </button>
-                <button id="add-rule-btn" onclick="openAddRuleModal()" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-600/30">
-                    <i data-lucide="plus-circle" class="w-4 h-4"></i> إضافة بند جديد
-                </button>
+            <!-- أزرار التعديل تظهر فقط لصاحب صلاحية LSPD Admin أو Manager -->
+            <div id="admin-controls" class="d-none">
+                <button id="edit-btn" class="btn btn-outline-warning btn-sm" onclick="toggleEditMode()">✏️ تعديل المحتوى</button>
+                <button id="save-btn" class="btn btn-success btn-sm d-none" onclick="saveContent()">💾 حفظ التغييرات</button>
             </div>
-        </header>
+        </div>
 
-        <div class="p-4 md:p-8 space-y-6 flex-1 overflow-y-auto">
+        <!-- منطقة المحتوى القابلة للتعديل -->
+        <div id="lspd-editable-content" contenteditable="false" class="p-4 border rounded bg-white shadow-sm text-dark">
 
-            <!-- الأكثر بحثاً والفلترة -->
-            <div class="space-y-3 custom-card p-4 rounded-2xl border">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-slate-400 flex items-center gap-1.5">
-                        <i data-lucide="trending-up" class="w-4 h-4 text-amber-400"></i> اختصارات سريعة (MT Rules):
-                    </span>
-                </div>
-                
-                <div class="flex flex-wrap gap-2 text-xs font-bold" id="popular-tags">
-                    <button onclick="togglePopularTag(this, 'سرقة')" class="tag-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-300 transition-all">#السرقات</button>
-                    <button onclick="togglePopularTag(this, '10-20')" class="tag-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-300 transition-all">#موقعك_10-20</button>
-                    <button onclick="togglePopularTag(this, 'Code 0')" class="tag-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-300 transition-all">#كود_زيرو</button>
-                    <button onclick="togglePopularTag(this, 'سلاح')" class="tag-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-300 transition-all">#الأسلحة</button>
-                    <button onclick="togglePopularTag(this, 'قتلت')" class="tag-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-300 transition-all">#القتل</button>
-                </div>
-
-                <div class="flex items-center gap-2 pt-3 border-t border-slate-800/80 overflow-x-auto pb-1 text-xs font-bold">
-                    <span class="text-slate-400 shrink-0">تصفية الخطورة:</span>
-                    <button id="sev-high" onclick="toggleSeverity('high')" class="sev-filter-btn shrink-0 px-3 py-1.5 bg-slate-900 text-rose-400 border border-rose-500/30 rounded-xl transition-all">🔴 شديد الخطورة / عقوبة عالية</button>
-                    <button id="sev-medium" onclick="toggleSeverity('medium')" class="sev-filter-btn shrink-0 px-3 py-1.5 bg-slate-900 text-amber-400 border border-amber-500/30 rounded-xl transition-all">🟡 متوسط الخطورة</button>
-                    <button id="sev-low" onclick="toggleSeverity('low')" class="sev-filter-btn shrink-0 px-3 py-1.5 bg-slate-900 text-sky-400 border border-sky-500/30 rounded-xl transition-all">🔵 تنظيمي / منخفض</button>
-                    <button onclick="resetSeverityFilters()" class="text-xs text-slate-500 underline mr-auto">إلغاء التحديد</button>
-                </div>
-            </div>
-
-            <!-- عرض القوانين -->
-            <div id="rules-container" class="space-y-4">
-                <!-- تعبئة ديناميكية -->
-            </div>
-
-            <!-- لوحة المنجر -->
-            <section id="sec-manager-panel" class="tab-content space-y-6 hidden">
-                <div class="border-b border-slate-800 pb-3">
-                    <h2 class="text-2xl font-bold text-amber-400 flex items-center gap-2"><i data-lucide="crown"></i> لوحة إدارة الحسابات والطلبات</h2>
-                </div>
-                <div class="custom-card border rounded-2xl p-4 overflow-x-auto">
-                    <table class="w-full text-right text-xs">
-                        <thead class="bg-slate-900 text-slate-400 border-b border-slate-800">
+            <!-- قسم الرتب الأساسية -->
+            <section id="lspd-outfits" class="mb-5">
+                <h4 class="text-primary border-bottom pb-2 mb-3">👕 أزياء ومركبات الرتب الأساسية</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped text-center align-middle">
+                        <thead class="table-dark">
                             <tr>
-                                <th class="p-3">المستخدم</th>
-                                <th class="p-3">الرتبة</th>
-                                <th class="p-3">الحالة</th>
-                                <th class="p-3">الإجراءات</th>
+                                <th>الرتبة (Rank)</th>
+                                <th>المركبة (Vehicle)</th>
+                                <th>Shirt</th>
+                                <th>Jackets</th>
+                                <th>Legs</th>
+                                <th>Body Armor</th>
+                                <th>Bags / Parachute</th>
+                                <th>Decals</th>
+                                <th>Hands</th>
+                                <th>Shoes</th>
+                                <th>Scarf & Chains</th>
+                                <th>Mask</th>
                             </tr>
                         </thead>
-                        <tbody id="users-table-body" class="divide-y divide-slate-800"></tbody>
+                        <tbody>
+                            <tr>
+                                <td><strong>Solo Cadet</strong>[cite: 2]</td>
+                                <td>Ford[cite: 2]</td>
+                                <td>Item: 34<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 1062<br><small>Text: 3</small>[cite: 2]</td>
+                                <td>Item: 433<br><small>Text: 4</small>[cite: 2]</td>
+                                <td>Item: 201<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 77<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 21<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Officer I</strong>[cite: 2]</td>
+                                <td>Ford[cite: 2]</td>
+                                <td>Item: 377<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 1060<br><small>Text: 4</small>[cite: 2]</td>
+                                <td>Item: 433<br><small>Text: 6</small>[cite: 2]</td>
+                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 229<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 277<br><small>Text: 1</small>[cite: 2]</td>
+                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 17<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Officer II</strong>[cite: 2]</td>
+                                <td>Ford Taurus[cite: 2]</td>
+                                <td>Item: 34<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 1060<br><small>Text: 4</small>[cite: 2]</td>
+                                <td>Item: 433<br><small>Text: 4</small>[cite: 2]</td>
+                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 229<br><small>Text: 1</small>[cite: 2]</td>
+                                <td>Item: 277<br><small>Text: 2</small>[cite: 2]</td>
+                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 17<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Officer III</strong>[cite: 2]</td>
+                                <td>Charger[cite: 2]</td>
+                                <td>Item: 34<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 1060<br><small>Text: 4</small>[cite: 2]</td>
+                                <td>Item: 433<br><small>Text: 4</small>[cite: 2]</td>
+                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 229<br><small>Text: 2</small>[cite: 2]</td>
+                                <td>Item: 277<br><small>Text: 3</small>[cite: 2]</td>
+                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 17<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Senior Officer</strong>[cite: 2]</td>
+                                <td>2018 Tahoe[cite: 2]</td>
+                                <td>Item: 34<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 1060<br><small>Text: 4</small>[cite: 2]</td>
+                                <td>Item: 433<br><small>Text: 4</small>[cite: 2]</td>
+                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 229<br><small>Text: 3</small>[cite: 2]</td>
+                                <td>Item: 277<br><small>Text: 3</small>[cite: 2]</td>
+                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 17<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Seargent</strong>[cite: 2]</td>
+                                <td>Caprice[cite: 2]</td>
+                                <td>Item: 34<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 1060<br><small>Text: 4</small>[cite: 2]</td>
+                                <td>Item: 433<br><small>Text: 4</small>[cite: 2]</td>
+                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 229<br><small>Text: 4</small>[cite: 2]</td>
+                                <td>Item: 277<br><small>Text: 4</small>[cite: 2]</td>
+                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 17<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                            </tr>
+                            <tr>
+                                <td><strong>First Seargent</strong>[cite: 2]</td>
+                                <td>Ford Taurus[cite: 2]</td>
+                                <td>Item: 34<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 1060<br><small>Text: 4</small>[cite: 2]</td>
+                                <td>Item: 433<br><small>Text: 4</small>[cite: 2]</td>
+                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 229<br><small>Text: 5</small>[cite: 2]</td>
+                                <td>Item: 277<br><small>Text: 5</small>[cite: 2]</td>
+                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 17<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Staff Seargent</strong>[cite: 2]</td>
+                                <td>2018 Charger[cite: 2]</td>
+                                <td>Item: 34<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 1060<br><small>Text: 4</small>[cite: 2]</td>
+                                <td>Item: 433<br><small>Text: 4</small>[cite: 2]</td>
+                                <td>Item: 0<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 229<br><small>Text: 6</small>[cite: 2]</td>
+                                <td>Item: 277<br><small>Text: 6</small>[cite: 2]</td>
+                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 17<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                                <td>Item: 9<br><small>Text: 0</small>[cite: 2]</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- قسم الوحدات الخاصة -->
+            <section id="lspd-special" class="mb-3">
+                <h4 class="text-primary border-bottom pb-2 mb-3">✈️ 🏍️ أزياء الوحدات الخاصة (Wings Outfits)</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped text-center align-middle">
+                        <thead class="table-info">
+                            <tr>
+                                <th>الوحدة (Unit)</th>
+                                <th>Shirt</th>
+                                <th>Jackets</th>
+                                <th>Legs</th>
+                                <th>Body Armor</th>
+                                <th>Bags / Parachute</th>
+                                <th>Hands</th>
+                                <th>Shoes</th>
+                                <th>Mask</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>AirShip (الوحدة الجوية)</strong>[cite: 3]</td>
+                                <td>Item: 15<br><small>Text: 0</small>[cite: 3]</td>
+                                <td>Item: 781<br><small>Text: 1</small>[cite: 3]</td>
+                                <td>Item: 417<br><small>Text: 0</small>[cite: 3]</td>
+                                <td>Item: 0<br><small>Text: 0</small>[cite: 3]</td>
+                                <td>Item: 0<br><small>Text: 0</small>[cite: 3]</td>
+                                <td>Item: 152<br><small>Text: 0</small>[cite: 3]</td>
+                                <td>Item: 18<br><small>Text: 0</small>[cite: 3]</td>
+                                <td>Item: 0<br><small>Text: 0</small>[cite: 3]</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Motorcycle (وحدة الدراجات)</strong>[cite: 3]</td>
+                                <td>Item: 15<br><small>Text: 0</small>[cite: 3]</td>
+                                <td>Item: 1051 / 1055<br><small>Text: 0</small>[cite: 3]</td>
+                                <td>Item: 442<br><small>Text: 0</small>[cite: 3]</td>
+                                <td>Item: 0<br><small>Text: 0</small>[cite: 3]</td>
+                                <td>Item: 0<br><small>Text: 0</small>[cite: 3]</td>
+                                <td>Item: 77<br><small>Text: 0</small>[cite: 3]</td>
+                                <td>Item: 21<br><small>Text: 0</small>[cite: 3]</td>
+                                <td>Item: 0<br><small>Text: 0</small>[cite: 3]</td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </section>
 
         </div>
-    </main>
-
-    <!-- Modal إضافة تصنيف جديد -->
-    <div id="cat-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-6 space-y-4 shadow-2xl">
-            <h3 class="text-lg font-bold text-purple-400 flex items-center gap-2">
-                <i data-lucide="folder-plus"></i> إضافة تصنيف جديد
-            </h3>
-            <div>
-                <label class="text-xs text-slate-400 block mb-1">اسم التصنيف (بالعربي)</label>
-                <input type="text" id="cat-title" placeholder="e.g. قوانين الطيران, قوانين العصابات" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-            </div>
-            <div>
-                <label class="text-xs text-slate-400 block mb-1">معرف التصنيف (بالإنجليزية - بدون مساحات)</label>
-                <input type="text" id="cat-id" placeholder="e.g. aviation_rules" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-            </div>
-            <div class="flex gap-2 pt-2">
-                <button onclick="saveCategory()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-xl text-sm">حفظ التصنيف</button>
-                <button onclick="closeAddCatModal()" class="px-4 bg-slate-800 text-slate-300 rounded-xl text-sm">إلغاء</button>
-            </div>
-        </div>
     </div>
 
-    <!-- Modal تسجيل الدخول -->
-    <div id="auth-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 id="auth-title" class="text-lg font-bold text-white">تسجيل الدخول</h3>
-                <button onclick="closeAuthModal()" class="text-slate-400 hover:text-white"><i data-lucide="x"></i></button>
-            </div>
-            
-            <div id="login-form" class="space-y-3">
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">اسم المستخدم</label>
-                    <input type="text" id="login-username" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-                </div>
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">كلمة المرور</label>
-                    <input type="password" id="login-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-                </div>
-                <button onclick="handleLogin()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm transition-all">تسجيل الدخول</button>
-                <p class="text-xs text-center text-slate-400 pt-2">ليس لديك حساب؟ <button onclick="toggleAuthMode('signup')" class="text-indigo-400 font-bold underline">تقديم طلب إنشاء حساب</button></p>
-            </div>
+    <!-- Bootstrap JS Bundle CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-            <div id="signup-form" class="space-y-3 hidden">
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">اسم المستخدم المطلوب</label>
-                    <input type="text" id="signup-username" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-                </div>
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">كلمة المرور</label>
-                    <input type="password" id="signup-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-                </div>
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">طلب رتبة</label>
-                    <select id="signup-role" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-                        <option value="user">مواطن / زائر (User)</option>
-                        <option value="admin">إداري (Admin)</option>
-                        <option value="manager">مدير (Manager)</option>
-                    </select>
-                </div>
-                <button onclick="handleSignup()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm transition-all">إرسال طلب الحساب</button>
-                <p class="text-xs text-center text-slate-400 pt-2">لديك حساب؟ <button onclick="toggleAuthMode('login')" class="text-indigo-400 font-bold underline">تسجيل الدخول</button></p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal إضافة وتعديل قانون -->
-    <div id="rule-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl p-6 space-y-4 shadow-2xl">
-            <h3 id="rule-modal-title" class="text-lg font-bold text-amber-400 flex items-center gap-2">
-                <i data-lucide="edit"></i> إضافة / تعديل بند
-            </h3>
-            <input type="hidden" id="rule-edit-id" value="">
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">رمز / كود البند</label>
-                    <input type="text" id="rule-code" placeholder="e.g. TRF-05, 10-20" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-                </div>
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">التصنيف</label>
-                    <select id="rule-category" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-                        <!-- خيارات ديناميكية -->
-                    </select>
-                </div>
-            </div>
-            <div>
-                <label class="text-xs text-slate-400 block mb-1">نص البند / الجريمة / البلاغ</label>
-                <textarea id="rule-text" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white"></textarea>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">العقوبة / الترجمة / الشرح</label>
-                    <input type="text" id="rule-penalty" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-                </div>
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">درجة الخطورة</label>
-                    <select id="rule-severity" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-                        <option value="high">🔴 شديد الخطورة</option>
-                        <option value="medium">🟡 متوسط الخطورة</option>
-                        <option value="low">🔵 تنظيمي / منخفض</option>
-                    </select>
-                </div>
-            </div>
-            <div class="flex gap-2 pt-2">
-                <button onclick="saveRule()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-xl text-sm">حفظ البند</button>
-                <button onclick="closeRuleModal()" class="px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm">إلغاء</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- 3. جافاسكريبت الصلاحيات ونظام التعديل -->
     <script>
-        // التصنيفات الافتراضية
-        let categoriesData = JSON.parse(localStorage.getItem('mt_categories')) || [
-            { id: "rp_general", title: "قوانين الرول بلاي (RP)", icon: "book-open" },
-            { id: "fines", title: "المخالفات والجرائم", icon: "gavel" },
-            { id: "police_codes", title: "أكواد الشرطة (MT)", icon: "radio" },
-            { id: "police_rules", title: "العقوبات العسكرية", icon: "shield-alert" },
-            { id: "promotions", title: "سلم الترقيات", icon: "award" }
-        ];
-
-        let accounts = JSON.parse(localStorage.getItem('lawcity_accounts')) || [
-            { id: 1, username: "manager", password: "123", role: "manager", status: "active" }
-        ];
-
-        // قائمة المفضلة الخاصة بالمستخدم فقط
-        let userFavorites = JSON.parse(localStorage.getItem('mt_favorites')) || [];
-
-        let currentUser = null;
-        let currentTab = 'all';
-        let selectedSeverities = [];
-
-        // قاعدة البيانات الشاملة لسيرفر MT (Mystery Town)
-        let defaultData = [
-            // --- قوانين الرول بلاي العامة MT ---
-            { id: 101, code: "RP-01", category: "rp_general", text: "تقدير الحياة (Value Your Life)", penalty: "يجب على الشخص تقدير حياته وحياة الآخرين عند تهديده بسلاح أو عند الخطف والمطاردات.", severity: "high" },
-            { id: 102, code: "RP-02", category: "rp_general", text: "القتل بدون سبب (RDM)", penalty: "ممنوع قتل أي لاعب بدون وجود سيناريو كامل ودوافع رول بلاي صريحة.", severity: "high" },
-            { id: 103, code: "RP-03", category: "rp_general", text: "الصدم بدون سبب (VDM)", penalty: "استخدام المركبة كأداة دهس أو قتل حاد يمنع منعاً باتاً.", severity: "high" },
-            { id: 104, code: "RP-04", category: "rp_general", text: "الخروج من السيناريو (Powergaming / Metagaming)", penalty: "يمنع كسر الكاركتر أو نقل معلومات من خارج اللعبة (ديسكورد/ستريم) إلى داخل اللعبة.", severity: "high" },
-
-            // --- المخالفات والجرائم ---
-            { id: 1, code: "TRF-01", category: "fines", text: "قطع الاشارة الحمراء", penalty: "غرامة: 500$ | السجن: - | الكفالة: -", severity: "low" },
-            { id: 2, code: "TRF-02", category: "fines", text: "تجاوز السرعة (داخل المدينة 90 - خارج المدينة 120)", penalty: "غرامة: 1,000$ | السجن: - | الكفالة: -", severity: "low" },
-            { id: 3, code: "TRF-03", category: "fines", text: "عكس السير وعدم الالتزام بالمسارات", penalty: "غرامة: 300$ | السجن: - | الكفالة: -", severity: "low" },
-            { id: 4, code: "TRF-04", category: "fines", text: "القيادة المتهورة (تفحيط أو صدم أو قيادة تشكل خطر)", penalty: "غرامة: 2,000$ | السجن: - | الكفالة: 3,500$", severity: "medium" },
-            { id: 8, code: "TRF-08", category: "fines", text: "القيادة تحت تأثير المسكرات أو المخدرات", penalty: "غرامة: 5,000$ | السجن: 5 شهر | الكفالة: 4,500$ + حجز المركبة", severity: "high" },
-            { id: 11, code: "TRF-11", category: "fines", text: "الهروب من الشرطة بالأقدام أو المركبة", penalty: "غرامة: 6,000$ | السجن: 10 شهر | الكفالة: حجز المركبة", severity: "high" },
-
-            // --- الجرائم الشديدة والسرقات ---
-            { id: 29, code: "CRM-01", category: "fines", text: "إصابة رجل أمن وطرحه أرضاً", penalty: "غرامة: 8,000$ | السجن: 20 شهر | الكفالة: لا يوجد", severity: "high" },
-            { id: 30, code: "CRM-02", category: "fines", text: "القتل العمد وبدون سبب", penalty: "غرامة: 4,000$ | السجن: 30 شهر | الكفالة: -", severity: "high" },
-            { id: 36, code: "CRM-08", category: "fines", text: "اختطاف رجل الدولة (شرطي/عسكري)", penalty: "غرامة: 10,000$ | السجن: 70 شهر | الكفالة: -", severity: "high" },
-            { id: 37, code: "CRM-09", category: "fines", text: "حرب العصابات وتبادل إطلاق النار", penalty: "غرامة: 12,000$ | السجن: 50 شهر | الكفالة: -", severity: "high" },
-            { id: 40, code: "CRM-12", category: "fines", text: "سرقة البنك المركزي / المتحف العالمي", penalty: "غرامة: 35,000$ - 40,000$ | السجن: 120 - 200 شهر + سحب السلاح", severity: "high" },
-
-            // --- أكواد الشرطة ---
-            { id: 41, code: "Code 0", category: "police_codes", text: "استنفار أمني شامل (Code 0)", penalty: "[ Despatch ] لاست : [ Robbery ] كود زيرو باسرع وقت", severity: "high" },
-            { id: 44, code: "Code 3", category: "police_codes", text: "تشغيل سفتي كامل بأضواء وصوت", penalty: "فروم [ badge NumBer ] تو [ badge NumBer ] كود ثري", severity: "medium" },
-            { id: 47, code: "10-20", category: "police_codes", text: "تحديد الموقع (10-20)", penalty: "تن توني - فروم [ Badge NumBer ] تو [ Despatch ] تن توني", severity: "low" },
-            { id: 48, code: "10-1", category: "police_codes", text: "مطاردة مركبة بالشارع", penalty: "إمامي حالة تن ون [تذكر الموقع، السبب، الموديل، اللوحة]", severity: "high" },
-            { id: 50, code: "10-13", category: "police_codes", text: "سرقة البنك المركزي", penalty: "امامي حالة تن ثيرتين [سرقة البنك المركزي]", severity: "high" },
-
-            // --- العسكرية والترقيات ---
-            { id: 51, code: "بند 0-1", category: "police_rules", text: "التلاعب بعدد الساعات بأي شكل", penalty: "الدرجة صفر: الفصل المباشر والإعدام وعدم الرجوع للخدمة", severity: "high" },
-            { id: 57, code: "TRQ-01", category: "promotions", text: "الترقية من Cadet إلى Solo Cadet", penalty: "اجتياز الاختبار الميداني + التقديم من الأكاديمية (50 نقطة)", severity: "low" }
-        ];
-
-        let rulesData = JSON.parse(localStorage.getItem('lawcity_rules_data')) || defaultData;
-
-        function renderCategoriesNav() {
-            const container = document.getElementById('dynamic-categories-nav');
-            const selectCat = document.getElementById('rule-category');
-            
-            container.innerHTML = categoriesData.map(c => `
-                <button onclick="switchTab('${c.id}')" id="btn-${c.id}" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:bg-slate-800 hover:text-white">
-                    <i data-lucide="${c.icon || 'folder'}" class="w-4 h-4"></i>
-                    ${c.title}
-                </button>
-            `).join('');
-
-            selectCat.innerHTML = categoriesData.map(c => `
-                <option value="${c.id}">${c.title}</option>
-            `).join('');
-
-            lucide.createIcons();
-        }
-
-        function switchTab(tabId) {
-            currentTab = tabId;
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-btn').forEach(el => {
-                el.classList.remove('bg-amber-500/10', 'text-amber-400', 'border-amber-500/20');
-                el.classList.add('text-slate-400');
-            });
-
-            const activeBtn = document.getElementById(`btn-${tabId}`);
-            if(activeBtn) activeBtn.classList.add('bg-amber-500/10', 'text-amber-400', 'border-amber-500/20');
-
-            if (tabId === 'manager-panel') {
-                document.getElementById('rules-container').classList.add('hidden');
-                document.getElementById('sec-manager-panel').classList.remove('hidden');
-                renderUsersTable();
-            } else {
-                document.getElementById('rules-container').classList.remove('hidden');
-                document.getElementById('sec-manager-panel').classList.add('hidden');
-                applyFilters();
-            }
-        }
-
-        function toggleFavorite(id) {
-            if (userFavorites.includes(id)) {
-                userFavorites = userFavorites.filter(favId => favId !== id);
-                showToast('تمت إزالة القانون من المفضلة الشخصية ⭐');
-            } else {
-                userFavorites.push(id);
-                showToast('تمت إضافة القانون للمفضلة الشخصية ⭐');
-            }
-            localStorage.setItem('mt_favorites', JSON.stringify(userFavorites));
-            applyFilters();
-        }
-
-        function applyFilters() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            let filtered = rulesData.filter(r => {
-                if (currentTab === 'favorites') {
-                    if (!userFavorites.includes(r.id)) return false;
-                } else if (currentTab !== 'all' && r.category !== currentTab) {
-                    return false;
-                }
-
-                if (selectedSeverities.length > 0 && !selectedSeverities.includes(r.severity)) return false;
-                if (query && !r.code.toLowerCase().includes(query) && !r.text.toLowerCase().includes(query) && !r.penalty.toLowerCase().includes(query)) return false;
-                return true;
-            });
-            renderRules(filtered);
-        }
-
-        function renderRules(data) {
-            const container = document.getElementById('rules-container');
-            if (data.length === 0) {
-                container.innerHTML = `<div class="p-8 text-center text-slate-500 font-bold border border-slate-800 rounded-2xl">لا توجد قوانين تعود لهذا التصنيف أو الفلتر.</div>`;
-                return;
-            }
-
-            container.innerHTML = data.map(r => {
-                const isFav = userFavorites.includes(r.id);
-                return `
-                <div class="custom-card border rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-slate-800 hover:border-slate-700 transition-all">
-                    <div class="space-y-1.5 flex-1">
-                        <div class="flex items-center gap-2">
-                            <span class="font-mono text-xs font-extrabold px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-amber-400">#${r.code}</span>
-                            <span class="text-[11px] font-bold px-2 py-0.5 rounded ${
-                                r.severity === 'high' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30' :
-                                r.severity === 'medium' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/30' :
-                                'bg-sky-500/10 text-sky-400 border border-sky-500/30'
-                            }">
-                                ${r.severity === 'high' ? '🔴 شديد الخطورة / عقوبة عالية' : r.severity === 'medium' ? '🟡 متوسط الخطورة' : '🔵 تنظيمي / منخفض'}
-                            </span>
-                        </div>
-                        <p class="text-sm font-bold text-slate-100">${r.text}</p>
-                        <p class="text-xs text-slate-400">⚖️️ التفاصيل / الشرح: <strong class="text-slate-200">${r.penalty}</strong></p>
-                    </div>
-
-                    <div class="flex items-center gap-2 shrink-0">
-                        <!-- زر المفضلة الشخصي -->
-                        <button onclick="toggleFavorite(${r.id})" class="p-2 rounded-xl border transition-all ${isFav ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40' : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-yellow-400'}">
-                            <i data-lucide="star" class="w-4 h-4 ${isFav ? 'fill-yellow-400' : ''}"></i>
-                        </button>
-
-                        <button onclick="copyRule('${r.code}', '${r.text}', '${r.penalty}')" class="px-3 py-2 bg-slate-800 hover:bg-indigo-600 hover:text-white border border-slate-700 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5">
-                            <i data-lucide="copy" class="w-3.5 h-3.5"></i> نسخ
-                        </button>
-
-                        ${currentUser && currentUser.role === 'manager' ? `
-                            <button onclick="editRule(${r.id})" class="p-2 bg-amber-500/10 text-amber-400 hover:bg-amber-500 hover:text-black rounded-xl border border-amber-500/30 transition-all"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
-                            <button onclick="deleteRule(${r.id})" class="p-2 bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white rounded-xl border border-rose-500/30 transition-all"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                        ` : ''}
-                    </div>
-                </div>
-            `}).join('');
-            lucide.createIcons();
-        }
-
-        // حفظ التصنيف الجديد
-        function openAddCatModal() { document.getElementById('cat-modal').classList.remove('hidden'); }
-        function closeAddCatModal() { document.getElementById('cat-modal').classList.add('hidden'); }
-        
-        function saveCategory() {
-            const title = document.getElementById('cat-title').value;
-            const id = document.getElementById('cat-id').value.trim().toLowerCase();
-
-            if (!title || !id) return alert('يرجى ملء جميع الخقول');
-
-            categoriesData.push({ id, title, icon: 'folder' });
-            localStorage.setItem('mt_categories', JSON.stringify(categoriesData));
-            renderCategoriesNav();
-            closeAddCatModal();
-            showToast('تمت إضافة التصنيف بنجاح!');
-        }
-
-        function toggleSeverity(sev) {
-            const btn = document.getElementById(`sev-${sev}`);
-            if (selectedSeverities.includes(sev)) {
-                selectedSeverities = selectedSeverities.filter(s => s !== sev);
-                btn.classList.remove('filter-btn-active');
-            } else {
-                selectedSeverities.push(sev);
-                btn.classList.add('filter-btn-active');
-            }
-            applyFilters();
-        }
-
-        function resetSeverityFilters() {
-            selectedSeverities = [];
-            document.querySelectorAll('.sev-filter-btn').forEach(b => b.classList.remove('filter-btn-active'));
-            applyFilters();
-        }
-
-        function togglePopularTag(btn, term) {
-            const input = document.getElementById('searchInput');
-            if (btn.classList.contains('filter-btn-active')) {
-                btn.classList.remove('filter-btn-active');
-                input.value = '';
-            } else {
-                document.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('filter-btn-active'));
-                btn.classList.add('filter-btn-active');
-                input.value = term;
-            }
-            applyFilters();
-        }
-
-        function openAddRuleModal() {
-            document.getElementById('rule-edit-id').value = '';
-            document.getElementById('rule-code').value = '';
-            document.getElementById('rule-text').value = '';
-            document.getElementById('rule-penalty').value = '';
-            document.getElementById('rule-modal-title').innerText = 'إضافة بند جديد';
-            document.getElementById('rule-modal').classList.remove('hidden');
-        }
-
-        function editRule(id) {
-            const rule = rulesData.find(r => r.id === id);
-            if (!rule) return;
-            document.getElementById('rule-edit-id').value = rule.id;
-            document.getElementById('rule-code').value = rule.code;
-            document.getElementById('rule-category').value = rule.category;
-            document.getElementById('rule-text').value = rule.text;
-            document.getElementById('rule-penalty').value = rule.penalty;
-            document.getElementById('rule-severity').value = rule.severity;
-            document.getElementById('rule-modal-title').innerText = 'تعديل بيانات البند';
-            document.getElementById('rule-modal').classList.remove('hidden');
-        }
-
-        function saveRule() {
-            const id = document.getElementById('rule-edit-id').value;
-            const code = document.getElementById('rule-code').value;
-            const category = document.getElementById('rule-category').value;
-            const text = document.getElementById('rule-text').value;
-            const penalty = document.getElementById('rule-penalty').value;
-            const severity = document.getElementById('rule-severity').value;
-
-            if (!code || !text) return alert('الرجاء إدخال الكود والنص');
-
-            if (id) {
-                const idx = rulesData.findIndex(r => r.id == id);
-                if (idx !== -1) rulesData[idx] = { id: parseInt(id), code, category, text, penalty, severity };
-            } else {
-                rulesData.push({ id: Date.now(), code, category, text, penalty, severity });
-            }
-
-            localStorage.setItem('lawcity_rules_data', JSON.stringify(rulesData));
-            closeRuleModal();
-            applyFilters();
-            showToast('تم الحفظ بنجاح!');
-        }
-
-        function deleteRule(id) {
-            if (confirm('هل أنت تأكد من الحذف؟')) {
-                rulesData = rulesData.filter(r => r.id !== id);
-                localStorage.setItem('lawcity_rules_data', JSON.stringify(rulesData));
-                applyFilters();
-                showToast('تم الحذف بنجاح.');
-            }
-        }
-
-        function closeRuleModal() { document.getElementById('rule-modal').classList.add('hidden'); }
-        function openAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
-        function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
-        
-        function toggleAuthMode(mode) {
-            if (mode === 'signup') {
-                document.getElementById('login-form').classList.add('hidden');
-                document.getElementById('signup-form').classList.remove('hidden');
-                document.getElementById('auth-title').innerText = 'طلب إنشاء حساب';
-            } else {
-                document.getElementById('login-form').classList.remove('hidden');
-                document.getElementById('signup-form').classList.add('hidden');
-                document.getElementById('auth-title').innerText = 'تسجيل الدخول';
-            }
-        }
-
-        function handleLogin() {
-            const user = document.getElementById('login-username').value;
-            const pass = document.getElementById('login-password').value;
-
-            const found = accounts.find(a => a.username === user && a.password === pass);
-            if (!found) return alert('اسم المستخدم أو كلمة المرور غير صحيحة!');
-            if (found.status === 'pending') return alert('حسابك بانتظار موافقة المنجر.');
-
-            currentUser = found;
-            updateAuthUI();
-            closeAuthModal();
-            showToast(`أهلاً بك ${currentUser.username}!`);
-        }
-
-        function handleSignup() {
-            const user = document.getElementById('signup-username').value;
-            const pass = document.getElementById('signup-password').value;
-            const role = document.getElementById('signup-role').value;
-
-            if (!user || !pass) return alert('الرجاء إكمال البيانات');
-
-            accounts.push({ id: Date.now(), username: user, password: pass, role, status: 'pending' });
-            localStorage.setItem('lawcity_accounts', JSON.stringify(accounts));
-            alert('تم تقديم الطلب بنجاح! يرجى انتظار موافقة المنجر.');
-            toggleAuthMode('login');
-        }
-
-        function updateAuthUI() {
-            const badge = document.getElementById('user-role-badge');
-            const name = document.getElementById('current-user-name');
-            const authBtn = document.getElementById('auth-btn');
-            const btnManager = document.getElementById('btn-manager-panel');
-            const addRuleBtn = document.getElementById('add-rule-btn');
-            const addCatBtn = document.getElementById('add-cat-btn');
-
-            if (currentUser) {
-                name.innerText = currentUser.username;
-                authBtn.innerHTML = `<i data-lucide="log-out" class="w-4 h-4"></i> تسجيل الخروج`;
-                authBtn.onclick = logout;
-
-                if (currentUser.role === 'manager') {
-                    badge.innerText = "الرتبة: منجر (Manager)";
-                    badge.className = "text-[11px] font-bold text-amber-400";
-                    btnManager.classList.remove('hidden');
-                    addRuleBtn.classList.remove('hidden');
-                    addCatBtn.classList.remove('hidden');
-                } else {
-                    badge.innerText = `الرتبة: ${currentUser.role}`;
-                    badge.className = "text-[11px] font-bold text-indigo-400";
-                    btnManager.classList.add('hidden');
-                    addRuleBtn.classList.add('hidden');
-                    addCatBtn.classList.add('hidden');
-                }
-            } else {
-                name.innerText = "زائر";
-                badge.innerText = "الرتبة: زائر";
-                authBtn.innerHTML = `<i data-lucide="log-in" class="w-4 h-4"></i> تسجيل الدخول`;
-                authBtn.onclick = openAuthModal;
-                btnManager.classList.add('hidden');
-                addRuleBtn.classList.add('hidden');
-                addCatBtn.classList.add('hidden');
-            }
-            applyFilters();
-            lucide.createIcons();
-        }
-
-        function logout() {
-            currentUser = null;
-            switchTab('all');
-            updateAuthUI();
-            showToast('تم تسجيل الخروج');
-        }
-
-        function renderUsersTable() {
-            const tbody = document.getElementById('users-table-body');
-            tbody.innerHTML = accounts.map(a => `
-                <tr class="hover:bg-slate-800/40">
-                    <td class="p-3 font-bold text-white">${a.username}</td>
-                    <td class="p-3">
-                        <select onchange="changeRole(${a.id}, this.value)" class="bg-slate-950 border border-slate-700 rounded px-2 py-1 text-xs">
-                            <option value="user" ${a.role === 'user' ? 'selected' : ''}>User</option>
-                            <option value="admin" ${a.role === 'admin' ? 'selected' : ''}>Admin</option>
-                            <option value="manager" ${a.role === 'manager' ? 'selected' : ''}>Manager</option>
-                        </select>
-                    </td>
-                    <td class="p-3">
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold ${a.status === 'active' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}">
-                            ${a.status === 'active' ? 'مفعل' : 'معلق'}
-                        </span>
-                    </td>
-                    <td class="p-3">
-                        ${a.status === 'pending' ? `<button onclick="approveUser(${a.id})" class="px-2 py-1 bg-emerald-600 text-white rounded text-xs">موافقة</button>` : ''}
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function approveUser(id) {
-            const acc = accounts.find(a => a.id === id);
-            if (acc) {
-                acc.status = 'active';
-                localStorage.setItem('lawcity_accounts', JSON.stringify(accounts));
-                renderUsersTable();
-                showToast('تم تفعيل الحساب بنجاح!');
-            }
-        }
-
-        function changeRole(id, role) {
-            const acc = accounts.find(a => a.id === id);
-            if (acc) {
-                acc.role = role;
-                localStorage.setItem('lawcity_accounts', JSON.stringify(accounts));
-                showToast('تمت ترقية / تغيير الرتبة.');
-            }
-        }
-
-        function copyRule(code, text, penalty) {
-            const str = `[MYSTERY TOWN] | بند #${code} | ${text} (التفاصيل: ${penalty})`;
-            navigator.clipboard.writeText(str).then(() => showToast(`تم نسخ البند #${code} بنجاح!`));
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('copy-toast');
-            document.getElementById('toast-msg').innerText = msg;
-            toast.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-6');
-            setTimeout(() => toast.classList.add('opacity-0', 'pointer-events-none', '-translate-y-6'), 2500);
-        }
-
-        window.onload = () => {
-            renderCategoriesNav();
-            updateAuthUI();
-            switchTab('all');
+        // بيانات الجلسة الافتراضية للمستخدم الحالي (تتغير حسب نظام تسجيل الدخول لديك)
+        const currentUser = {
+            username: "Officer_Admin",
+            roles: ["LSPD Admin"] // الصلاحيات المتاحة: "Manager", "LSPD Admin", "User"
         };
+
+        // التحقق من الصلاحيات عند تحميل الصفحة وإظهار زر التعديل إذا كان يملك الصلاحية
+        document.addEventListener("DOMContentLoaded", function () {
+            const hasEditPermission = currentUser.roles.includes("Manager") || currentUser.roles.includes("LSPD Admin");
+            
+            if (hasEditPermission) {
+                document.getElementById("admin-controls").classList.remove("d-none");
+            }
+
+            // استرجاع المحتوى المحفوظ مسبقاً من التخزين المحلي إن وجد
+            const savedContent = localStorage.getItem("lspd_page_content");
+            if (savedContent) {
+                document.getElementById("lspd-editable-content").innerHTML = savedContent;
+            }
+        });
+
+        // دالة تفعيل/إلغاء وضع التعديل (نفس أسلوب المانجر)
+        function toggleEditMode() {
+            const contentArea = document.getElementById("lspd-editable-content");
+            const editBtn = document.getElementById("edit-btn");
+            const saveBtn = document.getElementById("save-btn");
+
+            const isEditable = contentArea.getAttribute("contenteditable") === "true";
+
+            if (!isEditable) {
+                contentArea.setAttribute("contenteditable", "true");
+                contentArea.style.border = "2px dashed #ffc107";
+                contentArea.style.backgroundColor = "#fffdf5";
+                editBtn.classList.add("d-none");
+                saveBtn.classList.remove("d-none");
+            }
+        }
+
+        // دالة حفظ التعديلات وإغلاق وضع التعديل
+        function saveContent() {
+            const contentArea = document.getElementById("lspd-editable-content");
+            const editBtn = document.getElementById("edit-btn");
+            const saveBtn = document.getElementById("save-btn");
+
+            contentArea.setAttribute("contenteditable", "false");
+            contentArea.style.border = "1px solid #dee2e6";
+            contentArea.style.backgroundColor = "#ffffff";
+            editBtn.classList.remove("d-none");
+            saveBtn.classList.add("d-none");
+
+            // حفظ التغييرات في LocalStorage (يمكنك استبدالها لاحقاً بطلب AJAX/API لقاعدة البيانات)
+            const updatedHTML = contentArea.innerHTML;
+            localStorage.setItem("lspd_page_content", updatedHTML);
+
+            alert("تم حفظ التعديلات بنجاح بواسطة رتبة LSPD Admin!");
+        }
     </script>
 </body>
 </html>
