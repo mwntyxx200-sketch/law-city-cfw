@@ -3,64 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>قطاع العساكر - LSPD</title>
+    <title>بوابة السيرفر الرسمية - قطاع الشرطة والقوانين</title>
     <!-- Bootstrap 5 CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-dark: #121620;
+            --secondary-dark: #1b2230;
+            --accent-gold: #f39c12;
+            --lspd-blue: #0d6efd;
+        }
+        body {
+            background-color: var(--primary-dark);
+            color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar, .card, .modal-content, footer {
+            background-color: var(--secondary-dark) !important;
+            border-color: #2c3e50 !important;
+        }
+        .text-warning {
+            color: var(--accent-gold) !important;
+        }
+        /* واجهة الترحيب التمهيدية */
+        #welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(18, 22, 32, 0.95);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        .welcome-card {
+            background: var(--secondary-dark);
+            border: 2px solid var(--accent-gold);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(243, 156, 18, 0.3);
+            max-width: 600px;
+            width: 90%;
+        }
+        .table-dark {
+            background-color: #161d2b;
+        }
+        /* شريط التحكم السفلي للمنظورات والصلاحيات */
+        #role-switcher-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #090c10;
+            border-top: 1px solid var(--accent-gold);
+            z-index: 1050;
+            padding: 10px 20px;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body class="pb-5 mb-5">
 
-    <!-- 1. شريط التنقل العلوي (Navbar) -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <!-- 1. واجهة الترحيب السريعة عند الدخول -->
+    <div id="welcome-overlay">
+        <div class="welcome-card">
+            <h1 class="text-warning mb-3">🛡️ أهلاً بك في بوابة السيرفر الرسمية</h1>
+            <p class="text-muted mb-4">يرجى اختيار القسم الذي ترغب بالانتقال إليه:</p>
+            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+                <button class="btn btn-warning btn-lg px-4 fw-bold text-dark" onclick="switchPage('lspd')">👮 صفحة الشرطة (LSPD)</button>
+                <button class="btn btn-outline-light btn-lg px-4" onclick="switchPage('rules')">📜 القوانين العامة</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. شريط التنقل العلوي (Navbar) -->
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">موقع السيرفر</a>
+            <a class="navbar-brand text-warning fw-bold" href="#" onclick="switchPage('lspd')">🌟 اسم السيرفر الرسمي</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">الرئيسية</a>
+                        <a class="nav-link active" href="#" onclick="switchPage('lspd')">الرئيسية / قطاع العساكر</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">القوانين العامة</a>
+                        <a class="nav-link" href="#" onclick="switchPage('rules')">القوانين العامة</a>
                     </li>
-                    <!-- قائمة قطاع العساكر المضافة -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-warning fw-bold" href="#" id="lspdDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            🛡️ قطاع العساكر (LSPD)
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="lspdDropdown">
-                            <li><a class="dropdown-item" href="#lspd-outfits">أزياء وتجهيزات الرتب</a></li>
-                            <li><a class="dropdown-item" href="#lspd-special">الوحدات الخاصة</a></li>
-                        </ul>
+                    <li class="nav-item">
+                        <a class="nav-link text-warning" href="#" onclick="switchPage('logs')">📊 سجل التغييرات الإدارية</a>
                     </li>
                 </ul>
+                <span class="navbar-text text-info small" id="current-role-badge">
+                    المنظور الحالي: زائر (Visitor)
+                </span>
             </div>
         </div>
     </nav>
 
-    <!-- 2. محتوى صفحة العساكر الرئيسي -->
-    <div class="container mt-4" id="lspd-section">
-        <!-- شريط التحكم الإداري -->
-        <div class="d-flex justify-content-between align-items-center mb-3 p-3 bg-dark text-white rounded shadow-sm">
+    <!-- 3. المحتوى الرئيسي: صفحة قطاع العساكر (LSPD) -->
+    <div class="container mt-4 content-section active" id="section-lspd">
+        <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-secondary rounded shadow-sm">
             <h3 class="m-0 text-warning">🛡️ الدليل الموحد لملابس ومركبات قطاع LSPD</h3>
-            
-            <!-- أزرار التعديل تظهر فقط لصاحب صلاحية LSPD Admin أو Manager -->
             <div id="admin-controls" class="d-none">
                 <button id="edit-btn" class="btn btn-outline-warning btn-sm" onclick="toggleEditMode()">✏️ تعديل المحتوى</button>
                 <button id="save-btn" class="btn btn-success btn-sm d-none" onclick="saveContent()">💾 حفظ التغييرات</button>
             </div>
         </div>
 
-        <!-- منطقة المحتوى القابلة للتعديل -->
-        <div id="lspd-editable-content" contenteditable="false" class="p-4 border rounded bg-white shadow-sm text-dark">
+        <div id="lspd-editable-content" contenteditable="false" class="p-4 border rounded bg-dark shadow-sm">
 
-            <!-- قسم الرتب الأساسية -->
+            <!-- قسم أزياء ومركبات الرتب الأساسية -->
             <section id="lspd-outfits" class="mb-5">
-                <h4 class="text-primary border-bottom pb-2 mb-3">👕 أزياء ومركبات الرتب الأساسية</h4>
+                <h4 class="text-warning border-bottom pb-2 mb-3">👕 أزياء ومركبات ورتب قطاع LSPD الأساسية</h4>
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped text-center align-middle">
-                        <thead class="table-dark">
+                    <table class="table table-bordered table-dark text-center align-middle">
+                        <thead>
                             <tr>
                                 <th>الرتبة (Rank)</th>
                                 <th>المركبة (Vehicle)</th>
@@ -194,13 +262,13 @@
                 </div>
             </section>
 
-            <!-- قسم الوحدات الخاصة -->
+            <!-- قسم الوحدات الخاصة (Wings Outfits) -->
             <section id="lspd-special" class="mb-3">
-                <h4 class="text-primary border-bottom pb-2 mb-3">✈️ 🏍️ أزياء الوحدات الخاصة (Wings Outfits)</h4>
+                <h4 class="text-warning border-bottom pb-2 mb-3">✈️ 🏍️ أزياء الوحدات الخاصة (Wings Outfits)</h4>
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped text-center align-middle">
-                        <thead class="table-info">
-                            <tr>
+                    <table class="table table-bordered table-dark text-center align-middle">
+                        <thead>
+                            <tr class="table-secondary text-dark">
                                 <th>الوحدة (Unit)</th>
                                 <th>Shirt</th>
                                 <th>Jackets</th>
@@ -214,26 +282,26 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><strong>AirShip (الوحدة الجوية)</strong>[cite: 3]</td>
-                                <td>Item: 15<br><small>Text: 0</small>[cite: 3]</td>
-                                <td>Item: 781<br><small>Text: 1</small>[cite: 3]</td>
-                                <td>Item: 417<br><small>Text: 0</small>[cite: 3]</td>
-                                <td>Item: 0<br><small>Text: 0</small>[cite: 3]</td>
-                                <td>Item: 0<br><small>Text: 0</small>[cite: 3]</td>
-                                <td>Item: 152<br><small>Text: 0</small>[cite: 3]</td>
-                                <td>Item: 18<br><small>Text: 0</small>[cite: 3]</td>
-                                <td>Item: 0<br><small>Text: 0</small>[cite: 3]</td>
+                                <td><strong>AirShip (الوحدة الجوية)</strong></td>
+                                <td>Item: 15<br><small>Text: 0</small></td>
+                                <td>Item: 781<br><small>Text: 1</small></td>
+                                <td>Item: 417<br><small>Text: 0</small></td>
+                                <td>Item: 0<br><small>Text: 0</small></td>
+                                <td>Item: 0<br><small>Text: 0</small></td>
+                                <td>Item: 152<br><small>Text: 0</small></td>
+                                <td>Item: 18<br><small>Text: 0</small></td>
+                                <td>Item: 0<br><small>Text: 0</small></td>
                             </tr>
                             <tr>
-                                <td><strong>Motorcycle (وحدة الدراجات)</strong>[cite: 3]</td>
-                                <td>Item: 15<br><small>Text: 0</small>[cite: 3]</td>
-                                <td>Item: 1051 / 1055<br><small>Text: 0</small>[cite: 3]</td>
-                                <td>Item: 442<br><small>Text: 0</small>[cite: 3]</td>
-                                <td>Item: 0<br><small>Text: 0</small>[cite: 3]</td>
-                                <td>Item: 0<br><small>Text: 0</small>[cite: 3]</td>
-                                <td>Item: 77<br><small>Text: 0</small>[cite: 3]</td>
-                                <td>Item: 21<br><small>Text: 0</small>[cite: 3]</td>
-                                <td>Item: 0<br><small>Text: 0</small>[cite: 3]</td>
+                                <td><strong>Motorcycle (وحدة الدراجات)</strong></td>
+                                <td>Item: 15<br><small>Text: 0</small></td>
+                                <td>Item: 1051 / 1055<br><small>Text: 0</small></td>
+                                <td>Item: 442<br><small>Text: 0</small></td>
+                                <td>Item: 0<br><small>Text: 0</small></td>
+                                <td>Item: 0<br><small>Text: 0</small></td>
+                                <td>Item: 77<br><small>Text: 0</small></td>
+                                <td>Item: 21<br><small>Text: 0</small></td>
+                                <td>Item: 0<br><small>Text: 0</small></td>
                             </tr>
                         </tbody>
                     </table>
@@ -243,33 +311,116 @@
         </div>
     </div>
 
+    <!-- 4. المحتوى الثانوي: صفحة القوانين العامة للسيرفر -->
+    <div class="container mt-4 content-section" id="section-rules">
+        <div class="p-4 bg-secondary rounded shadow-sm">
+            <h3 class="text-warning mb-3">📜 قوانين وأنظمة السيرفر العامة</h3>
+            <p class="text-light">هذه الصفحة مخصصة لعرض القوانين الأساسية لضمان متعة واستقرار اللعب لجميع الأعضاء.</p>
+            <ul class="list-group list-group-flush bg-dark text-light rounded">
+                <li class="list-group-item bg-dark text-light border-secondary">1. يمنع منعاً باتاً استغلال الأخطاء البرمجية (Glitches) ويجب إبلاغ الإدارة فوراً.</li>
+                <li class="list-group-item bg-dark text-light border-secondary">2. احترام جميع اللاعبين وطاقم الإدارة وعدم التلفظ بألفاظ نابية.</li>
+                <li class="list-group-item bg-dark text-light border-secondary">3. الالتزام بقواعد تقمص الأدوار (RP) في جميع المواقف والسيناريوهات الأمنية.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 5. صفحة سجل التغييرات الإدارية (Audit Logs) -->
+    <div class="container mt-4 content-section" id="section-logs">
+        <div class="p-4 bg-secondary rounded shadow-sm">
+            <h3 class="text-warning mb-3">📊 سجل التغييرات والتعديلات الإدارية</h3>
+            <p class="text-light small">يتم تسجيل كافة التعديلات التي يقوم بها المسؤولون مع إظهار التوقيت، اسم المسؤول، ونوع التعديل (قبل وبعد).</p>
+            <div class="table-responsive">
+                <table class="table table-bordered table-dark text-center align-middle">
+                    <thead>
+                        <tr>
+                            <th>التاريخ والوقت</th>
+                            <th>اسم المسؤول</th>
+                            <th>نوع التعديل</th>
+                            <th>الحالة قبل التعديل</th>
+                            <th>الحالة بعد التعديل</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logs-table-body">
+                        <tr>
+                            <td colspan="5" class="text-muted">لا توجد تعديلات مسجلة حتى الآن.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. شريط تغيير المنظور السفلي -->
+    <div id="role-switcher-bar" class="d-flex justify-content-between align-items-center">
+        <span class="small text-warning fw-bold">🛠️ لوحة محاكاة المنظورات الإدارية:</span>
+        <div class="btn-group btn-group-sm" role="group">
+            <button type="button" class="btn btn-outline-warning" onclick="changeRole('Manager')">Manager</button>
+            <button type="button" class="btn btn-outline-info" onclick="changeRole('Admin')">Admin</button>
+            <button type="button" class="btn btn-outline-success" onclick="changeRole('LSPD Admin')">LSPD Admin</button>
+            <button type="button" class="btn btn-outline-light" onclick="changeRole('Visitor')">منظور زائر</button>
+        </div>
+    </div>
+
     <!-- Bootstrap JS Bundle CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- 3. جافاسكريبت الصلاحيات ونظام التعديل -->
+    <!-- 7. الجافاسكريبت المحدث لنظام التعديل والسجلات -->
     <script>
-        // بيانات الجلسة الافتراضية للمستخدم الحالي (تتغير حسب نظام تسجيل الدخول لديك)
-        const currentUser = {
-            username: "Officer_Admin",
-            roles: ["LSPD Admin"] // الصلاحيات المتاحة: "Manager", "LSPD Admin", "User"
+        // إعدادات جلسة المستخدم الحالي الافتراضية
+        let currentSession = {
+            username: "زائر (Visitor)",
+            role: "Visitor" // الخيارات: Manager, Admin, LSPD Admin, Visitor
         };
 
-        // التحقق من الصلاحيات عند تحميل الصفحة وإظهار زر التعديل إذا كان يملك الصلاحية
-        document.addEventListener("DOMContentLoaded", function () {
-            const hasEditPermission = currentUser.roles.includes("Manager") || currentUser.roles.includes("LSPD Admin");
+        let contentBeforeEdit = "";
+
+        // دالة الانتقال بين الصفحات
+        function switchPage(pageName) {
+            document.getElementById("welcome-overlay").style.opacity = "0";
+            setTimeout(() => {
+                document.getElementById("welcome-overlay").style.display = "none";
+            }, 500);
+
+            document.querySelectorAll(".content-section").forEach(sec => sec.classList.remove("active"));
+            if (pageName === 'lspd') {
+                document.getElementById("section-lspd").classList.add("active");
+            } else if (pageName === 'rules') {
+                document.getElementById("section-rules").classList.add("active");
+            } else if (pageName === 'logs') {
+                document.getElementById("section-logs").classList.add("active");
+                renderLogsTable();
+            }
+        }
+
+        // تغيير الصلاحية والمنظور
+        function changeRole(selectedRole) {
+            currentSession.role = selectedRole;
             
-            if (hasEditPermission) {
-                document.getElementById("admin-controls").classList.remove("d-none");
+            if (selectedRole === "Manager") {
+                currentSession.username = "المدير العام (Manager)";
+            } else if (selectedRole === "Admin") {
+                currentSession.username = "المشرف (Admin)";
+            } else if (selectedRole === "LSPD Admin") {
+                currentSession.username = "مسؤول القطاع (LSPD Admin)";
+            } else {
+                currentSession.username = "زائر (Visitor)";
             }
 
-            // استرجاع المحتوى المحفوظ مسبقاً من التخزين المحلي إن وجد
-            const savedContent = localStorage.getItem("lspd_page_content");
-            if (savedContent) {
-                document.getElementById("lspd-editable-content").innerHTML = savedContent;
-            }
-        });
+            document.getElementById("current-role-badge").innerText = "المنظور الحالي: " + currentSession.username;
 
-        // دالة تفعيل/إلغاء وضع التعديل (نفس أسلوب المانجر)
+            const adminControls = document.getElementById("admin-controls");
+            
+            if (selectedRole === "Manager" || selectedRole === "LSPD Admin") {
+                adminControls.classList.remove("d-none");
+                alert("تم التحويل إلى منظور (" + currentSession.username + "): مسموح لك بالتعديل.");
+            } else {
+                adminControls.classList.add("d-none");
+                cancelEditMode();
+                alert("تم التحويل إلى منظور (" + currentSession.username + "): عرض فقط.");
+            }
+        }
+
+        // بدء التعديل وحفظ نسخة (قبل)
         function toggleEditMode() {
             const contentArea = document.getElementById("lspd-editable-content");
             const editBtn = document.getElementById("edit-btn");
@@ -278,32 +429,92 @@
             const isEditable = contentArea.getAttribute("contenteditable") === "true";
 
             if (!isEditable) {
+                // حفظ نسخة النص قبل التعديل للمقارنة لاحقاً
+                contentBeforeEdit = contentArea.innerHTML;
+
                 contentArea.setAttribute("contenteditable", "true");
-                contentArea.style.border = "2px dashed #ffc107";
-                contentArea.style.backgroundColor = "#fffdf5";
+                contentArea.style.border = "2px dashed #f39c12";
                 editBtn.classList.add("d-none");
                 saveBtn.classList.remove("d-none");
             }
         }
 
-        // دالة حفظ التعديلات وإغلاق وضع التعديل
+        function cancelEditMode() {
+            const contentArea = document.getElementById("lspd-editable-content");
+            contentArea.setAttribute("contenteditable", "false");
+            contentArea.style.border = "1px solid #2c3e50";
+            document.getElementById("edit-btn").classList.remove("d-none");
+            document.getElementById("save-btn").classList.add("d-none");
+        }
+
+        // حفظ التعديلات وتسجيلها في السجل (Audit Log)
         function saveContent() {
             const contentArea = document.getElementById("lspd-editable-content");
-            const editBtn = document.getElementById("edit-btn");
-            const saveBtn = document.getElementById("save-btn");
-
             contentArea.setAttribute("contenteditable", "false");
-            contentArea.style.border = "1px solid #dee2e6";
-            contentArea.style.backgroundColor = "#ffffff";
-            editBtn.classList.remove("d-none");
-            saveBtn.classList.add("d-none");
+            contentArea.style.border = "1px solid #2c3e50";
+            document.getElementById("edit-btn").classList.remove("d-none");
+            document.getElementById("save-btn").classList.add("d-none");
 
-            // حفظ التغييرات في LocalStorage (يمكنك استبدالها لاحقاً بطلب AJAX/API لقاعدة البيانات)
-            const updatedHTML = contentArea.innerHTML;
-            localStorage.setItem("lspd_page_content", updatedHTML);
+            const contentAfterEdit = contentArea.innerHTML;
+            localStorage.setItem("server_lspd_content", contentAfterEdit);
 
-            alert("تم حفظ التعديلات بنجاح بواسطة رتبة LSPD Admin!");
+            // إنشاء سجل جديد بالتغيير
+            const now = new Date();
+            const timestamp = now.toLocaleDateString('ar-SA') + ' ' + now.toLocaleTimeString('ar-SA');
+
+            const newLog = {
+                time: timestamp,
+                user: currentSession.username,
+                type: "تعديل جدول أزياء ومركبات LSPD",
+                before: contentBeforeEdit.length > 100 ? contentBeforeEdit.substring(0, 80) + "..." : contentBeforeEdit,
+                after: contentAfterEdit.length > 100 ? contentAfterEdit.substring(0, 80) + "..." : contentAfterEdit
+            };
+
+            // جلب السجلات القديمة وإضافة الجديد
+            let logs = JSON.parse(localStorage.getItem("lspd_audit_logs") || "[]");
+            logs.unshift(newLog); // إضافة في البداية
+            localStorage.setItem("lspd_audit_logs", JSON.stringify(logs));
+
+            alert("تم حفظ التعديلات وتسجيل التغيير بنجاح في سجل الإدارة!");
         }
+
+        // عرض جدول السجلات
+        function renderLogsTable() {
+            const tbody = document.getElementById("logs-table-body");
+            const logs = JSON.parse(localStorage.getItem("lspd_audit_logs") || "[]");
+
+            if (logs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-muted">لا توجد تعديلات مسجلة حتى الآن.</td></tr>`;
+                return;
+            }
+
+            let html = "";
+            logs.forEach(log => {
+                html += `
+                    <tr>
+                        <td><small>${log.time}</small></td>
+                        <td><span class="badge bg-warning text-dark">${log.user}</span></td>
+                        <td>${log.type}</td>
+                        <td class="text-danger small text-start" style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(log.before)}"><strong>قبل:</strong> ${escapeHtml(log.before)}</td>
+                        <td class="text-success small text-start" style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(log.after)}"><strong>بعد:</strong> ${escapeHtml(log.after)}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        // مساعدة لتفادي مشاكل الأكواد داخل الـ Title
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
+
+        // استرجاع البيانات المحفوظة عند التحميل إن وجدت
+        document.addEventListener("DOMContentLoaded", function () {
+            const saved = localStorage.getItem("server_lspd_content");
+            if (saved) {
+                document.getElementById("lspd-editable-content").innerHTML = saved;
+            }
+        });
     </script>
 </body>
 </html>
