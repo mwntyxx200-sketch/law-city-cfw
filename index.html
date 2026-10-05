@@ -1,631 +1,232 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="theme-default text-size-md">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LAW CITY CFW | القوانين والبروتوكولات الرسمية</title>
-    <!-- Tailwind CSS CDN -->
+    <title>LAW CITY CFW | الدليل الرسمي للقوانين والبروتوكولات</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts: Cairo -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
-        body { font-family: 'Cairo', sans-serif; }
-        
-        .theme-default {
-            --bg-main: #020617;
-            --bg-card: rgba(15, 23, 42, 0.8);
-            --border-color: #1e293b;
-        }
-
         body {
-            background-color: var(--bg-main);
-            transition: background-color 0.3s ease;
+            font-family: 'Cairo', sans-serif;
+            background-color: #050b14;
+            color: #f1f5f9;
         }
-
-        .custom-card {
-            background-color: var(--bg-card);
-            border-color: var(--border-color);
-            backdrop-filter: blur(12px);
-        }
-
-        .glass-header {
-            background: rgba(15, 23, 42, 0.85);
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
             backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
         }
-
-        .filter-btn-active {
-            background-color: #312e81 !important;
-            border-color: #6366f1 !important;
+        .glow-effect {
+            box-shadow: 0 0 25px rgba(99, 102, 241, 0.15);
+        }
+        .tab-active-citizen {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
             color: #ffffff !important;
-            box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
         }
-
-        @media print {
-            aside, header, .no-print, nav.mobile-bottom-nav { display: none !important; }
-            main { width: 100% !important; margin: 0 !important; }
-            body { background: #fff !important; color: #000 !important; }
-            .custom-card { background: #fff !important; border: 1px solid #ccc !important; color: #000 !important; }
+        .tab-active-military {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%) !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
         }
     </style>
 </head>
-<body class="text-slate-100 min-h-screen flex flex-col md:flex-row relative overflow-x-hidden pb-20 md:pb-0">
+<body class="min-h-screen flex flex-col">
 
-    <!-- إشعار التنبيهات -->
-    <div id="copy-toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-slate-900/90 text-slate-100 border border-indigo-500/40 px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md flex items-center gap-3 text-xs font-bold transition-all duration-300 opacity-0 pointer-events-none -translate-y-6">
-        <div class="p-1.5 bg-indigo-500/20 text-indigo-400 rounded-lg">
-            <i data-lucide="check-circle-2" class="w-4 h-4"></i>
-        </div>
-        <span id="toast-msg">تمت العملية بنجاح!</span>
-    </div>
-
-    <!-- Sidebar القائمة الجانبية -->
-    <aside class="hidden md:flex w-72 bg-slate-900 border-l border-slate-800 p-5 flex-col justify-between shrink-0 z-20">
-        <div class="space-y-6">
-            <!-- الشعار -->
-            <div class="flex items-center gap-3 px-2">
-                <div class="p-3 bg-gradient-to-tr from-indigo-600 via-indigo-700 to-violet-800 rounded-xl text-white shadow-lg shadow-indigo-500/30">
-                    <i data-lucide="shield-check" class="w-7 h-7"></i>
+    <!-- رأس الصفحة / الهوية -->
+    <header class="glass-panel border-b border-slate-800 sticky top-0 z-40 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <!-- الشعار والاسم -->
+            <div class="flex items-center gap-3">
+                <div class="p-3 bg-gradient-to-tr from-indigo-600 to-violet-700 rounded-2xl text-white shadow-lg shadow-indigo-500/20">
+                    <i data-lucide="shield-check" class="w-8 h-8"></i>
                 </div>
                 <div>
-                    <h1 class="font-black text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-indigo-300">LAW CITY CFW</h1>
-                    <p class="text-[11px] font-bold text-slate-400" id="user-role-badge">الرتبة: مواطن</p>
+                    <h1 class="font-black text-xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-indigo-200 to-indigo-400">LAW CITY CFW</h1>
+                    <p class="text-xs text-slate-400 font-semibold">بوابة القوانين والإرشادات الرسمية للأعضاء</p>
                 </div>
             </div>
 
-            <!-- قائمة التبويبات والتصنيفات -->
-            <nav class="space-y-1.5 overflow-y-auto max-h-[calc(100vh-280px)] pr-1" id="sidebar-nav">
-                <button onclick="switchTab('all')" id="btn-all" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-amber-400 bg-amber-500/10 border border-amber-500/20">
-                    <i data-lucide="layers" class="w-4 h-4 text-amber-400"></i>
-                    جميع القوانين والأنظمة
-                </button>
-
-                <button onclick="switchTab('favorites')" id="btn-favorites" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-yellow-400 hover:bg-slate-800">
-                    <i data-lucide="star" class="w-4 h-4 text-yellow-400 fill-yellow-400"></i>
-                    المفضلة ⭐ (خاصة بك)
-                </button>
-
-                <hr class="border-slate-800 my-2">
-
-                <!-- تصنيفات القوانين الديناميكية -->
-                <div id="dynamic-categories-nav" class="space-y-1.5"></div>
-
-                <hr class="border-slate-800 my-2">
-
-                <!-- أدوات خاصة بالمنجر فقط -->
-                <div id="manager-tools" class="hidden space-y-1.5">
-                    <button onclick="openManageCatsModal()" class="w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-purple-300 bg-purple-600/10 hover:bg-purple-600/20 border border-purple-500/30">
-                        <span class="flex items-center gap-2">
-                            <i data-lucide="settings" class="w-4 h-4 text-purple-400"></i>
-                            تعديل وإدارة التصنيفات
-                        </span>
-                        <span class="text-[9px] px-1.5 py-0.5 bg-purple-500/20 rounded text-purple-300 font-black">إدارة</span>
-                    </button>
-
-                    <button onclick="switchTab('manager-panel')" id="btn-manager-panel" class="nav-btn w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20">
-                        <span class="flex items-center gap-2">
-                            <i data-lucide="crown" class="w-4 h-4 text-amber-400"></i>
-                            إدارة الحسابات والرتب
-                        </span>
-                        <span class="text-[9px] px-1.5 py-0.5 bg-amber-500/20 rounded text-amber-300 font-extrabold">MANAGER</span>
-                    </button>
-                </div>
-            </nav>
-        </div>
-
-        <div class="pt-4 border-t border-slate-800 space-y-3">
-            <div class="flex items-center justify-between text-xs text-slate-400">
-                <span>المستخدم الحالي:</span>
-                <span id="current-user-name" class="font-bold text-white">مواطن</span>
+            <!-- شريط البحث السريع -->
+            <div class="relative w-full md:w-80">
+                <i data-lucide="search" class="w-4 h-4 absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" oninput="filterRules()" placeholder="ابحث عن قانون، بند، أو كود..." 
+                       class="w-full bg-slate-900/90 border border-slate-800 rounded-xl pr-10 pl-4 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all">
             </div>
-            <button id="auth-btn" onclick="openAuthModal()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-xs font-bold rounded-lg text-white border border-indigo-500 transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30">
-                <i data-lucide="log-in" class="w-4 h-4"></i> تسجيل دخول كإداري
-            </button>
         </div>
-    </aside>
-
-    <!-- شريط الجوال السفلي -->
-    <nav class="mobile-bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 border-t border-slate-800 px-4 py-2 flex items-center justify-around backdrop-blur-lg">
-        <button onclick="switchTab('all')" class="flex flex-col items-center gap-1 text-[10px] font-bold text-amber-400">
-            <i data-lucide="layers" class="w-5 h-5"></i>
-            <span>الكل</span>
-        </button>
-        <button onclick="switchTab('favorites')" class="flex flex-col items-center gap-1 text-[10px] font-bold text-yellow-400">
-            <i data-lucide="star" class="w-5 h-5 fill-yellow-400"></i>
-            <span>المفضلة</span>
-        </button>
-        <button onclick="openAuthModal()" class="flex flex-col items-center gap-1 text-[10px] font-bold text-indigo-400">
-            <i data-lucide="user" class="w-5 h-5"></i>
-            <span>الحساب</span>
-        </button>
-    </nav>
+    </header>
 
     <!-- المحتوى الرئيسي -->
-    <main class="flex-1 flex flex-col min-w-0">
-        
-        <header class="sticky top-0 z-30 glass-header border-b border-slate-800/80 px-4 md:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="relative w-full max-w-lg">
-                <i data-lucide="search" class="w-5 h-5 absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input type="text" id="searchInput" oninput="applyFilters()" placeholder="ابحث باسم القانون، الكود، البروتوكول e.g. 10-20, كود زيرو, السطو..." 
-                       class="w-full bg-slate-900/90 border border-slate-700/60 rounded-xl pr-11 pl-10 py-2.5 text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-all">
-            </div>
-            
-            <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
-                <button id="add-cat-btn" onclick="openAddCatModal()" class="hidden bg-purple-600 hover:bg-purple-700 text-white font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-lg shadow-purple-600/30">
-                    <i data-lucide="folder-plus" class="w-4 h-4"></i> تصنيف جديد
-                </button>
-                <button id="add-rule-btn" onclick="openAddRuleModal()" class="hidden bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-600/30">
-                    <i data-lucide="plus-circle" class="w-4 h-4"></i> إضافة بند جديد
-                </button>
-            </div>
-        </header>
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8 space-y-6">
 
-        <div class="p-4 md:p-8 space-y-6 flex-1 overflow-y-auto">
-
-            <!-- شريط الفلترة والأكثر بحثاً -->
-            <div class="space-y-3 custom-card p-4 rounded-2xl border">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-slate-400 flex items-center gap-1.5">
-                        <i data-lucide="zap" class="w-4 h-4 text-amber-400"></i> اختصارات سريعة LAW CITY CFW:
-                    </span>
+        <!-- أزرار التبديل الرئيسية (القسمين الأساسيين) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <button onclick="switchSection('citizens')" id="btn-citizens" class="tab-active-citizen p-4 rounded-2xl flex items-center justify-between transition-all group cursor-pointer border border-blue-500/30">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 bg-white/10 rounded-xl text-white">
+                        <i data-lucide="users" class="w-6 h-6"></i>
+                    </div>
+                    <div class="text-right">
+                        <h2 class="font-bold text-sm">قسم المواطنين، العصابات والوظائف</h2>
+                        <p class="text-[11px] text-blue-100/80">قوانين الرول بلاي العامة، السرقات، والمرور</p>
+                    </div>
                 </div>
-                
-                <div class="flex flex-wrap gap-2 text-xs font-bold" id="popular-tags">
-                    <button onclick="togglePopularTag(this, 'سطو')" class="tag-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-300 transition-all">#السطو والجرائم</button>
-                    <button onclick="togglePopularTag(this, '10-20')" class="tag-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-300 transition-all">#الموقع_10-20</button>
-                    <button onclick="togglePopularTag(this, 'CODE-0')" class="tag-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-300 transition-all">#كود_زيرو</button>
-                    <button onclick="togglePopularTag(this, 'الحياة')" class="tag-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-300 transition-all">#تقدير_الحياة</button>
-                    <button onclick="togglePopularTag(this, 'بروتوكول')" class="tag-btn px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-300 transition-all">#البروتوكولات</button>
+                <i data-lucide="chevron-left" class="w-5 h-5 text-white/70 group-hover:-translate-x-1 transition-transform"></i>
+            </button>
+
+            <button onclick="switchSection('military')" id="btn-military" class="glass-panel p-4 rounded-2xl flex items-center justify-between transition-all group cursor-pointer border border-slate-800 hover:border-emerald-500/40">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 bg-emerald-500/10 rounded-xl text-emerald-400">
+                        <i data-lucide="shield-alert" class="w-6 h-6"></i>
+                    </div>
+                    <div class="text-right">
+                        <h2 class="font-bold text-sm text-slate-200">قسم العساكر والأمن</h2>
+                        <p class="text-[11px] text-slate-400">أكواد اللاسلكي، البرتوكولات، وحقوق المحتجزين</p>
+                    </div>
                 </div>
-
-                <div class="flex items-center gap-2 pt-3 border-t border-slate-800/80 overflow-x-auto pb-1 text-xs font-bold">
-                    <span class="text-slate-400 shrink-0">مستوى العقوبة:</span>
-                    <button id="sev-high" onclick="toggleSeverity('high')" class="sev-filter-btn shrink-0 px-3 py-1.5 bg-slate-900 text-rose-400 border border-rose-500/30 rounded-xl transition-all">🔴 عقوبة قصوى / جنائية</button>
-                    <button id="sev-medium" onclick="toggleSeverity('medium')" class="sev-filter-btn shrink-0 px-3 py-1.5 bg-slate-900 text-amber-400 border border-amber-500/30 rounded-xl transition-all">🟡 مخالفات متوسطة</button>
-                    <button id="sev-low" onclick="toggleSeverity('low')" class="sev-filter-btn shrink-0 px-3 py-1.5 bg-slate-900 text-sky-400 border border-sky-500/30 rounded-xl transition-all">🔵 إرشادي / تنظيم داخلي</button>
-                    <button onclick="resetSeverityFilters()" class="text-xs text-slate-500 underline mr-auto">إلغاء الفلترة</button>
-                </div>
-            </div>
-
-            <!-- عرض القوانين -->
-            <div id="rules-container" class="space-y-4"></div>
-
-            <!-- لوحة المنجر -->
-            <section id="sec-manager-panel" class="tab-content space-y-6 hidden">
-                <div class="border-b border-slate-800 pb-3">
-                    <h2 class="text-2xl font-bold text-amber-400 flex items-center gap-2"><i data-lucide="crown"></i> لوحة إدارة الحسابات والطلبات</h2>
-                </div>
-                <div class="custom-card border rounded-2xl p-4 overflow-x-auto">
-                    <table class="w-full text-right text-xs">
-                        <thead class="bg-slate-900 text-slate-400 border-b border-slate-800">
-                            <tr>
-                                <th class="p-3">المستخدم</th>
-                                <th class="p-3">الرتبة</th>
-                                <th class="p-3">الحالة</th>
-                                <th class="p-3">الإجراءات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="users-table-body" class="divide-y divide-slate-800"></tbody>
-                    </table>
-                </div>
-            </section>
-
-        </div>
-    </main>
-
-    <!-- Modal تعديل وإدارة التصنيفات (للمنجر فقط) -->
-    <div id="manage-cats-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl p-6 space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-lg font-bold text-purple-400 flex items-center gap-2">
-                    <i data-lucide="settings"></i> إدارة والتعديل على التصنيفات
-                </h3>
-                <button onclick="closeManageCatsModal()" class="text-slate-400 hover:text-white"><i data-lucide="x"></i></button>
-            </div>
-            
-            <div id="cats-management-list" class="space-y-3 max-h-80 overflow-y-auto pr-1"></div>
-
-            <button onclick="openAddCatModal(); closeManageCatsModal();" class="w-full py-2 bg-purple-600/20 text-purple-300 hover:bg-purple-600 hover:text-white border border-purple-500/30 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2">
-                <i data-lucide="plus-circle" class="w-4 h-4"></i> إضافة تصنيف جديد كلياً
+                <i data-lucide="chevron-left" class="w-5 h-5 text-slate-500 group-hover:-translate-x-1 transition-transform"></i>
             </button>
         </div>
-    </div>
 
-    <!-- Modal إضافة / تعديل تصنيف -->
-    <div id="cat-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-6 space-y-4 shadow-2xl">
-            <h3 id="cat-modal-title" class="text-lg font-bold text-purple-400 flex items-center gap-2">
-                <i data-lucide="folder-plus"></i> إضافة / تعديل تصنيف
-            </h3>
-            <input type="hidden" id="edit-cat-original-id" value="">
-            <div>
-                <label class="text-xs text-slate-400 block mb-1">اسم التصنيف (بالعربي)</label>
-                <input type="text" id="cat-title" placeholder="e.g. قوانين الطيران, البروتوكولات البحرية" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-            </div>
-            <div>
-                <label class="text-xs text-slate-400 block mb-1">المعرف البرمجي (بالإنجليزية - بدون مساحات)</label>
-                <input type="text" id="cat-id" placeholder="e.g. aviation_rules" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-            </div>
-            <div class="flex gap-2 pt-2">
-                <button onclick="saveCategory()" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-xl text-sm">حفظ التصنيف</button>
-                <button onclick="closeAddCatModal()" class="px-4 bg-slate-800 text-slate-300 rounded-xl text-sm">إلغاء</button>
-            </div>
-        </div>
-    </div>
+        <!-- أزرار التصنيفات الفرعية (تتغير ديناميكياً حسب القسم المختار) -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none" id="sub-categories-bar"></div>
 
-    <!-- Modal تسجيل الدخول (خاص بالإدارة) -->
-    <div id="auth-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 id="auth-title" class="text-lg font-bold text-white">تسجيل دخول الإدارة</h3>
-                <button onclick="closeAuthModal()" class="text-slate-400 hover:text-white"><i data-lucide="x"></i></button>
-            </div>
-            
-            <div id="login-form" class="space-y-3">
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">اسم المستخدم</label>
-                    <input type="text" id="login-username" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-                </div>
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">كلمة المرور</label>
-                    <input type="password" id="login-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-                </div>
-                
-                <!-- خيار حفظ تسجيل الدخول -->
-                <div class="flex items-center gap-2 pt-1">
-                    <input type="checkbox" id="remember-me" class="rounded bg-slate-950 border-slate-800 text-indigo-600 focus:ring-0 w-4 h-4">
-                    <label for="remember-me" class="text-xs text-slate-300 font-bold cursor-pointer">حفظ تسجيل الدخول (عدم الخروج التلقائي)</label>
-                </div>
+        <!-- حاوية عرض القوانين والبنود -->
+        <div id="rules-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
 
-                <button onclick="handleLogin()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm transition-all shadow-lg shadow-indigo-600/30">تسجيل الدخول</button>
-                <p class="text-xs text-center text-slate-400 pt-2">طلب رتبة إدارية جديدة؟ <button onclick="toggleAuthMode('signup')" class="text-indigo-400 font-bold underline">إرسال طلب إداري</button></p>
-            </div>
+    </main>
 
-            <div id="signup-form" class="space-y-3 hidden">
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">اسم المستخدم المطلوب</label>
-                    <input type="text" id="signup-username" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-                </div>
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">كلمة المرور</label>
-                    <input type="password" id="signup-password" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-                </div>
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">طلب رتبة إدارية</label>
-                    <select id="signup-role" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-                        <option value="admin">إداري (Admin)</option>
-                        <option value="manager">مدير (Manager)</option>
-                    </select>
-                </div>
-                <button onclick="handleSignup()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm transition-all">إرسال الطلب للمنجر</button>
-                <p class="text-xs text-center text-slate-400 pt-2">لديك حساب بالفعل؟ <button onclick="toggleAuthMode('login')" class="text-indigo-400 font-bold underline">تسجيل الدخول</button></p>
-            </div>
-        </div>
-    </div>
+    <!-- تذييل الصفحة -->
+    <footer class="glass-panel border-t border-slate-800 py-4 text-center text-xs text-slate-500">
+        جميع الحقوق محفوظة © LAW CITY CFW 2026 - نظام القوانين والإرشادات الداخلية
+    </footer>
 
-    <!-- Modal إضافة وتعديل قانون -->
-    <div id="rule-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl p-6 space-y-4 shadow-2xl">
-            <h3 id="rule-modal-title" class="text-lg font-bold text-amber-400 flex items-center gap-2">
-                <i data-lucide="edit"></i> إضافة / تعديل بند قانوني
-            </h3>
-            <input type="hidden" id="rule-edit-id" value="">
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">رمز / كود البند</label>
-                    <input type="text" id="rule-code" placeholder="e.g. CFW-101, 10-20" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-                </div>
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">التصنيف</label>
-                    <select id="rule-category" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white"></select>
-                </div>
-            </div>
-            <div>
-                <label class="text-xs text-slate-400 block mb-1">عنوان / نص القانون أو البلاغ</label>
-                <textarea id="rule-text" rows="2" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white"></textarea>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">العقوبة / الشرح والتفاصيل</label>
-                    <input type="text" id="rule-penalty" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-                </div>
-                <div>
-                    <label class="text-xs text-slate-400 block mb-1">درجة الخطورة</label>
-                    <select id="rule-severity" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-                        <option value="high">🔴 عقوبة قصوى / جنائية</option>
-                        <option value="medium">🟡 مخالفات متوسطة</option>
-                        <option value="low">🔵 إرشادي / تنظيم داخلي</option>
-                    </select>
-                </div>
-            </div>
-            <div class="flex gap-2 pt-2">
-                <button onclick="saveRule()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2.5 rounded-xl text-sm">حفظ البند</button>
-                <button onclick="closeRuleModal()" class="px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-sm">إلغاء</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- سكريبت التشغيل والبيانات -->
     <script>
-        // التصنيفات الأصلية للسيرفر
-        let categoriesData = JSON.parse(localStorage.getItem('lawcity_categories')) || [
-            { id: "rp_rules", title: "أنظمة الرول بلاي (RP Rules)", icon: "book-open" },
-            { id: "criminal_law", title: "قانون العقوبات والسرقات", icon: "gavel" },
-            { id: "police_codes", title: "أكواد وإشارات اللاسلكي", icon: "radio" },
-            { id: "police_protocols", title: "بروتوكولات وواجبات الأمن", icon: "shield-alert" },
-            { id: "traffic_law", title: "قوانين المرور والمركبات", icon: "car" },
-            { id: "promotions", title: "سلم الرتب والترقيات", icon: "award" }
-        ];
+        // بيانات القوانين والأنظمة الخاصة بالسيرفر
+        const database = {
+            citizens: [
+                { id: 1, cat: 'rp', catName: 'أنظمة الرول بلاي', code: 'CFW-RP-01', title: 'قدسية وحماية الحياة (Value Your Life)', desc: 'يتوجب عليك الانصياع الفوري والتجاوب الكامل عند الوقوع تحت تهديد السلاح المباشر لحماية حياتك وعدم تعريضها للخطر العشوائي.', severity: 'high' },
+                { id: 2, cat: 'rp', catName: 'أنظمة الرول بلاي', code: 'CFW-RP-02', title: 'القتل غير المبرر (RDM)', desc: 'يمنع الاستهداف بالقتل أو إطلاق النار على أي مواطن دون بناء سيناريو متكامل ودوافع رول بلاي واضحة.', severity: 'high' },
+                { id: 3, cat: 'rp', catName: 'أنظمة الرول بلاي', code: 'CFW-RP-03', title: 'الاعتداء بالمركبات (VDM)', desc: 'يحظر استخدام المركبات كأداة هجومية أو صدم المواطنين والأمن بأسلوب غير واقعي.', severity: 'high' },
+                { id: 4, cat: 'rp', catName: 'أنظمة الرول بلاي', code: 'CFW-RP-04', title: 'كسر واقعية المدينة (Fail RP)', desc: 'يمنع استغلال معلومات المدى الخارجي أو القيام بأفعال تتنافى مع منطق الواقع داخل السيرفر.', severity: 'medium' },
+                
+                { id: 5, cat: 'criminal', catName: 'قانون السرقات والجرائم', code: 'LAW-CR-01', title: 'السطو على المركزي والمؤسسات المالية', desc: 'العقوبة: السجن 150 شهر + غرامة 45,000$ مع مصادرة العتاد المستخدم بالكامل.', severity: 'high' },
+                { id: 6, cat: 'criminal', catName: 'قانون السرقات والجرائم', code: 'LAW-CR-02', title: 'اختطاف رجال الأمن أثناء أداء الواجب', desc: 'العقوبة: السجن 90 شهر + غرامة 25,000$ (كفالة غير متاحة في هذا البند).', severity: 'high' },
+                { id: 7, cat: 'criminal', catName: 'قانون السرقات والجرائم', code: 'LAW-CR-03', title: 'حيازة أسلحة ثقيلة غير مرخصة (Class-3)', desc: 'العقوبة: السجن 45 شهر + غرامة 15,000$ ومصادرة السلاح.', severity: 'medium' },
 
-        let accounts = JSON.parse(localStorage.getItem('lawcity_accounts')) || [
-            { id: 1, username: "manager", password: "123", role: "manager", status: "active" }
-        ];
+                { id: 8, cat: 'traffic', catName: 'قوانين المرور والمركبات', code: 'TRF-01', title: 'تجاوز السرعة القانونية داخل النطاق العمراني', desc: 'العقوبة: غرامة مالية قدرها 1,500$ + تسجيل إنذار مروري على السجل.', severity: 'low' },
+                { id: 9, cat: 'traffic', catName: 'قوانين المرور والمركبات', code: 'TRF-02', title: 'القيادة بدون رخصة قيادة سارية', desc: 'العقوبة: غرامة 3,000$ مع حجز المركبة لمدة 10 دقائق.', severity: 'low' }
+            ],
+            military: [
+                { id: 10, cat: 'codes', catName: 'أكواد اللاسلكي', code: 'CODE-0', title: 'نداء حالة الطوارئ القصوى (Code 0)', desc: 'توجيه كافة الوحدات الأمنية فوراً وإلغاء جميع البلاغات الثانوية للانتقال للموقع وتأمينه.', severity: 'high' },
+                { id: 11, cat: 'codes', catName: 'أكواد اللاسلكي', code: '10-20', title: 'تحديد الموقع الحالي للوحدة / الهدف', desc: 'الصيغة المعتمدة: [رقم الوحدة] - [10-20] - [اسم المنطقة أو الشارع المعني].', severity: 'low' },
+                { id: 12, cat: 'codes', catName: 'أكواد اللاسلكي', code: '10-80', title: 'مطاردة مركبة في حالة فرار', desc: 'الصيغة: [رقم الوحدة] - [10-80] - [نوع المركبة، اللون، اتجاه الحركة السرعة].', severity: 'medium' },
+                { id: 13, cat: 'codes', catName: 'أكواد اللاسلكي', code: '10-99', title: 'تعرض ضابط لإطلاق نار مباشر', desc: 'استجابة سريعة فورية من أقرب دوريتين مع تفعيل أجهزة الإنذار والطلب العاجل للاسعاف.', severity: 'high' },
 
-        // المفضلة الشخصية
-        let userFavorites = JSON.parse(localStorage.getItem('lawcity_favorites')) || [];
+                { id: 14, cat: 'protocols', catName: 'بروتوكولات الأمن والتعامل', code: 'PRT-01', title: 'حقوق المتهم أثناء الاحتجاز (ميراندا)', desc: 'يجب تلاوة الحقوق فور التكبيل للمتهم: (لك الحق في الصمت، وكل ما تقوله سيستخدم ضدك...)', severity: 'medium' },
+                { id: 15, cat: 'protocols', catName: 'بروتوكولات الأمن والتعامل', code: 'PRT-02', title: 'بروتوكول التعامل مع الرهائن والأزمات', desc: 'سلامة الرهينة هي الأولوية المطلقة قبل الشروع بأي اقتحام أو مفاوضة مع الخاطفين.', severity: 'high' },
+                { id: 16, cat: 'protocols', catName: 'بروتوكولات الأمن والتعامل', code: 'PRT-03', title: 'سلم استخدام القوة الميدانية', desc: 'التدرج الميداني: الإنذار الصوتي -> استخدام العصا/الصاعق -> الأسلحة النارية عند الخطر المميت.', severity: 'high' }
+            ]
+        };
 
-        let currentUser = null;
-        let currentTab = 'all';
-        let selectedSeverities = [];
+        let currentSection = 'citizens';
+        let currentSubCat = 'all';
 
-        // قاعدة بيانات قوانين حصرية وخاصة بـ LAW CITY CFW
-        let defaultData = [
-            // --- أنظمة الرول بلاي العامة LAW CITY CFW ---
-            { id: 101, code: "CFW-RP-01", category: "rp_rules", text: "قدسية وحماية الحياة (Value Your Life)", penalty: "يتوجب عليك الانصياع الفوري والتجاوب الكامل عند الوقوع تحت تهديد السلاح المباشر لحماية حياتك.", severity: "high" },
-            { id: 102, code: "CFW-RP-02", category: "rp_rules", text: "القتل غير المبرر (RDM Protocol)", penalty: "يمنع الاستهداف بالقتل أو إطلاق النار على أي مواطن دون بناء سيناريو متكامل ودوافع واضحة.", severity: "high" },
-            { id: 103, code: "CFW-RP-03", category: "rp_rules", text: "الاعتداء بالمركبات (VDM Protocol)", penalty: "يحظر استخدام المركبات كأداة هجومية أو صدم المواطنين والأمن بأسلوب غير واقعي.", severity: "high" },
-            { id: 104, code: "CFW-RP-04", category: "rp_rules", text: "كسر واقعية المدينة (Fail RP / Metagaming)", penalty: "يمنع استغلال معلومات المدى الخارجي (البثوث/الديسكورد) أو القيام بأفعال تتنافى مع منطق الواقع.", severity: "high" },
-            { id: 105, code: "CFW-RP-05", category: "rp_rules", text: "استغلال الثغرات البرمجية (Exploiting)", penalty: "حظر دائم وسوري من السيرفر لكل من يستغل ثغرة برمجية لصالح الكاركتر.", severity: "high" },
+        function switchSection(section) {
+            currentSection = section;
+            currentSubCat = 'all';
 
-            // --- قانون الجرائم والسطو LAW CITY CFW ---
-            { id: 201, code: "LAW-CR-01", category: "criminal_law", text: "السطو على المركزي والمؤسسات المالية", penalty: "السجن: 150 شهر | غرامة: 45,000$ + مصادرة العتاد المستخدم", severity: "high" },
-            { id: 202, code: "LAW-CR-02", category: "criminal_law", text: "اختطاف رجال الأمن أثناء أداء الواجب", penalty: "السجن: 90 شهر | غرامة: 25,000$ | كفالة: غير متاحة", severity: "high" },
-            { id: 203, code: "LAW-CR-03", category: "criminal_law", text: "حيازة أسلحة ثقيلة غير مرخصة (Class-3)", penalty: "السجن: 45 شهر | غرامة: 15,000$ + مصادرة السلاح", severity: "high" },
-            { id: 204, code: "LAW-CR-04", category: "criminal_law", text: "متاجرة وترويج المواد المخدرة", penalty: "السجن: 30 شهر | غرامة: 10,000$ + مصادرة الشحنة", severity: "medium" },
+            const btnCitizens = document.getElementById('btn-citizens');
+            const btnMilitary = document.getElementById('btn-military');
 
-            // --- أكواد اللاسلكي LAW CITY CFW ---
-            { id: 301, code: "CODE-0", category: "police_codes", text: "نداء حالة الطوارئ القصوى (Code 0)", penalty: "توجيه كافة الوحدات الأمنية فوراً وإلغاء جميع البلاغات الثانوية للانتقال للموقع.", severity: "high" },
-            { id: 302, code: "10-20", category: "police_codes", text: "تحديد موقع الوحدة / الهدف", penalty: "الصيغة: [رقم الوحدة] - [10-20] - [اسم المنطقة المعنية]", severity: "low" },
-            { id: 303, code: "10-80", category: "police_codes", text: "مطاردة مركبة في حالة فرار", penalty: "الصيغة: [رقم الوحدة] - [10-80] - [نوع المركبة، اللون، اتجاه الحركة]", severity: "medium" },
-            { id: 304, code: "10-99", category: "police_codes", text: "تعرض ضابط لإطلاق نار مباشر", penalty: "استجابة سريعة من أقرب دوريتين مع تفعيل أجهزة الإنذار كاملة (Code 3)", severity: "high" },
-
-            // --- بروتوكولات الأمن LAW CITY CFW ---
-            { id: 401, code: "PRT-01", category: "police_protocols", text: "حقوق المتهم أثناء الاحتجاز (حقوق ميراندا)", penalty: "يجب تلاوة الحقوق فور التكبيل: (لك الحق في الصمت، وكل ما تقوله قد يستخدم ضدك...)", severity: "medium" },
-            { id: 402, code: "PRT-02", category: "police_protocols", text: "بروتوكول التعامل مع الرهائن", penalty: "سلامة الرهينة هي الأولوية المطلقة قبل مفاوضة المفحطين أو الخاطفين.", severity: "high" },
-
-            // --- قوانين المرور LAW CITY CFW ---
-            { id: 501, code: "TRF-01", category: "traffic_law", text: "تجاوز السرعة القانونية داخل النطاق العمراني", penalty: "غرامة مالية: 1,500$ + إنذار مروري", severity: "low" },
-            { id: 502, code: "TRF-02", category: "traffic_law", text: "القيادة بدون رخصة قيادة سارية", penalty: "غرامة: 3,000$ | حجز المركبة لمدة 10 دقائق", severity: "medium" },
-
-            // --- الترقية LAW CITY CFW ---
-            { id: 601, code: "PRM-01", category: "promotions", text: "الترقية من رتبة مستجد إلى مستجد ميداني", penalty: "إكمال 15 ساعة ميدانية + اجتياز اختار اللوائح الأمنية بنجاح", severity: "low" }
-        ];
-
-        let rulesData = JSON.parse(localStorage.getItem('lawcity_rules_data')) || defaultData;
-
-        // تهيئة تسجيل الدخول التلقائي (تذكرني)
-        function initAuth() {
-            const savedUser = localStorage.getItem('lawcity_saved_user');
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
+            if (section === 'citizens') {
+                btnCitizens.className = 'tab-active-citizen p-4 rounded-2xl flex items-center justify-between transition-all group cursor-pointer border border-blue-500/30';
+                btnMilitary.className = 'glass-panel p-4 rounded-2xl flex items-center justify-between transition-all group cursor-pointer border border-slate-800 hover:border-emerald-500/40';
             } else {
-                currentUser = { username: "مواطن", role: "citizen" };
+                btnMilitary.className = 'tab-active-military p-4 rounded-2xl flex items-center justify-between transition-all group cursor-pointer border border-emerald-500/30';
+                btnCitizens.className = 'glass-panel p-4 rounded-2xl flex items-center justify-between transition-all group cursor-pointer border border-slate-800 hover:border-blue-500/40';
             }
-            updateUIRoles();
+
+            renderSubCategories();
+            renderRules();
         }
 
-        function renderCategoriesNav() {
-            const container = document.getElementById('dynamic-categories-nav');
-            const selectCat = document.getElementById('rule-category');
+        function renderSubCategories() {
+            const container = document.getElementById('sub-categories-bar');
+            const items = database[currentSection];
             
-            container.innerHTML = categoriesData.map(c => `
-                <button onclick="switchTab('${c.id}')" id="btn-${c.id}" class="nav-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:bg-slate-800 hover:text-white">
-                    <i data-lucide="${c.icon || 'folder'}" class="w-4 h-4"></i>
-                    ${c.title}
-                </button>
-            `).join('');
+            // استخراج التصنيفات الفرعية الفريدة
+            const catsMap = new Map();
+            items.forEach(i => catsMap.set(i.cat, i.catName));
 
-            selectCat.innerHTML = categoriesData.map(c => `
-                <option value="${c.id}">${c.title}</option>
-            `).join('');
-
-            lucide.createIcons();
-        }
-
-        function switchTab(tabId) {
-            currentTab = tabId;
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-btn').forEach(el => {
-                el.classList.remove('bg-amber-500/10', 'text-amber-400', 'border-amber-500/20');
-                el.classList.add('text-slate-400');
+            let html = `<button onclick="filterBySubCat('all')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 ${currentSubCat === 'all' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'glass-panel text-slate-400 hover:text-white'}">الكل</button>`;
+            
+            catsMap.forEach((name, key) => {
+                const isActive = currentSubCat === key;
+                html += `<button onclick="filterBySubCat('${key}')" class="px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 ${isActive ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'glass-panel text-slate-400 hover:text-white'}">${name}</button>`;
             });
 
-            const activeBtn = document.getElementById(`btn-${tabId}`);
-            if(activeBtn) activeBtn.classList.add('bg-amber-500/10', 'text-amber-400', 'border-amber-500/20');
-
-            if (tabId === 'manager-panel') {
-                document.getElementById('rules-container').classList.add('hidden');
-                document.getElementById('sec-manager-panel').classList.remove('hidden');
-                renderUsersTable();
-            } else {
-                document.getElementById('rules-container').classList.remove('hidden');
-                document.getElementById('sec-manager-panel').classList.add('hidden');
-                applyFilters();
-            }
+            container.innerHTML = html;
         }
 
-        function toggleFavorite(id) {
-            if (userFavorites.includes(id)) {
-                userFavorites = userFavorites.filter(favId => favId !== id);
-                showToast('تمت إزالة القانون من المفضلة ⭐');
-            } else {
-                userFavorites.push(id);
-                showToast('تمت إضافة القانون للمفضلة ⭐');
-            }
-            localStorage.setItem('lawcity_favorites', JSON.stringify(userFavorites));
-            applyFilters();
+        function filterBySubCat(catKey) {
+            currentSubCat = catKey;
+            renderSubCategories();
+            renderRules();
         }
 
-        function applyFilters() {
+        function filterRules() {
+            renderRules();
+        }
+
+        function renderRules() {
+            const container = document.getElementById('rules-grid');
             const query = document.getElementById('searchInput').value.toLowerCase();
-            let filtered = rulesData.filter(r => {
-                if (currentTab === 'favorites') {
-                    if (!userFavorites.includes(r.id)) return false;
-                } else if (currentTab !== 'all' && r.category !== currentTab) {
-                    return false;
-                }
+            let items = database[currentSection];
 
-                if (selectedSeverities.length > 0 && !selectedSeverities.includes(r.severity)) return false;
-                if (query && !r.code.toLowerCase().includes(query) && !r.text.toLowerCase().includes(query) && !r.penalty.toLowerCase().includes(query)) return false;
-                return true;
-            });
-            renderRules(filtered);
-        }
+            if (currentSubCat !== 'all') {
+                items = items.filter(i => i.cat === currentSubCat);
+            }
 
-        function renderRules(data) {
-            const container = document.getElementById('rules-container');
-            if (data.length === 0) {
-                container.innerHTML = `<div class="p-8 text-center text-slate-500 font-bold border border-slate-800 rounded-2xl">لا توجد بنود مطابقة للبحث أو التصفية الحالية.</div>`;
+            if (query) {
+                items = items.filter(i => i.code.toLowerCase().includes(query) || i.title.toLowerCase().includes(query) || i.desc.toLowerCase().includes(query));
+            }
+
+            if (items.length === 0) {
+                container.innerHTML = `<div class="col-span-full p-8 text-center text-slate-500 font-bold glass-panel rounded-2xl">لا توجد نتائج مطابقة لبحثك الحالي.</div>`;
                 return;
             }
 
-            container.innerHTML = data.map(r => {
-                const isFav = userFavorites.includes(r.id);
-                const sevColor = r.severity === 'high' ? 'border-rose-500/30 text-rose-400 bg-rose-500/10' : (r.severity === 'medium' ? 'border-amber-500/30 text-amber-400 bg-amber-500/10' : 'border-sky-500/30 text-sky-400 bg-sky-500/10');
-                const sevText = r.severity === 'high' ? 'عقوبة قصوى' : (r.severity === 'medium' ? 'مخالفة متوسطة' : 'إرشادي');
-                
+            container.innerHTML = items.map(item => {
+                const isHigh = item.severity === 'high';
+                const isMed = item.severity === 'medium';
+                const sevBadgeClass = isHigh ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' : (isMed ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' : 'bg-sky-500/10 text-sky-400 border-sky-500/30');
+                const sevText = isHigh ? 'عقوبة قصوى / جنائية' : (isMed ? 'مخالفة متوسطة' : 'إرشادي / تنظيمي');
+
                 return `
-                <div class="custom-card border rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-slate-800 hover:border-slate-700 transition-all">
-                    <div class="space-y-1.5">
-                        <div class="flex items-center gap-2">
-                            <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-black bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">${r.code}</span>
-                            <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold border ${sevColor}">${sevText}</span>
-                        </div>
-                        <h3 class="font-bold text-sm text-white">${r.text}</h3>
-                        <p class="text-xs text-slate-400">${r.penalty}</p>
+                <div class="glass-panel p-5 rounded-2xl space-y-3 hover:border-slate-700 transition-all glow-effect">
+                    <div class="flex items-center justify-between">
+                        <span class="px-2.5 py-1 rounded-lg text-[10px] font-black bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">${item.code}</span>
+                        <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold border ${sevBadgeClass}">${sevText}</span>
                     </div>
-                    <div class="flex items-center gap-2 shrink-0">
-                        <button onclick="toggleFavorite(${r.id})" class="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all text-slate-300">
-                            <i data-lucide="star" class="w-4 h-4 ${isFav ? 'fill-yellow-400 text-yellow-400' : ''}"></i>
-                        </button>
-                        ${currentUser && (currentUser.role === 'admin' || currentUser.role === 'manager') ? `
-                            <button onclick="openEditRuleModal(${r.id})" class="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all text-indigo-400">
-                                <i data-lucide="edit-2" class="w-4 h-4"></i>
-                            </button>
-                            <button onclick="deleteRule(${r.id})" class="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all text-rose-400">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
-                        ` : ''}
+                    <div>
+                        <h3 class="font-bold text-sm text-white mb-1">${item.title}</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">${item.desc}</p>
                     </div>
                 </div>`;
             }).join('');
-
-            lucide.createIcons();
         }
 
-        function showToast(msg) {
-            const toast = document.getElementById('copy-toast');
-            document.getElementById('toast-msg').innerText = msg;
-            toast.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-6');
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'pointer-events-none', '-translate-y-6');
-            }, 3000);
-        }
-
-        // دوال التحكم بالصلاحيات والمودلز
-        function openAuthModal() {
-            document.getElementById('auth-modal').classList.remove('hidden');
-        }
-        function closeAuthModal() {
-            document.getElementById('auth-modal').classList.add('hidden');
-        }
-        function toggleAuthMode(mode) {
-            if(mode === 'signup') {
-                document.getElementById('login-form').classList.add('hidden');
-                document.getElementById('signup-form').classList.remove('hidden');
-                document.getElementById('auth-title').innerText = 'طلب رتبة إدارية جديدة';
-            } else {
-                document.getElementById('signup-form').classList.add('hidden');
-                document.getElementById('login-form').classList.remove('hidden');
-                document.getElementById('auth-title').innerText = 'تسجيل دخول الإدارة';
-            }
-        }
-
-        function handleLogin() {
-            const u = document.getElementById('login-username').value.trim();
-            const p = document.getElementById('login-password').value.trim();
-            const remember = document.getElementById('remember-me').checked;
-
-            const found = accounts.find(acc => acc.username === u && acc.password === p && acc.status === 'active');
-            if(found) {
-                currentUser = found;
-                if(remember) {
-                    localStorage.setItem('lawcity_saved_user', JSON.stringify(currentUser));
-                }
-                showToast(`أهلاً بك مجدداً يا ${currentUser.username}!`);
-                closeAuthModal();
-                updateUIRoles();
-            } else {
-                alert('خطأ في البيانات أو أن الحساب قيد الانتظار/غير مصرح له!');
-            }
-        }
-
-        function handleSignup() {
-            const u = document.getElementById('signup-username').value.trim();
-            const p = document.getElementById('signup-password').value.trim();
-            const r = document.getElementById('signup-role').value;
-
-            if(!u || !p) {
-                alert('يرجى تعبئة الحقول المطلوبة.');
-                return;
-            }
-
-            accounts.push({ id: Date.now(), username: u, password: p, role: r, status: 'pending' });
-            localStorage.setItem('lawcity_accounts', JSON.stringify(accounts));
-            showToast('تم إرسال طلبك بنجاح، بانتظار موافقة المنجر.');
-            closeAuthModal();
-        }
-
-        function updateUIRoles() {
-            document.getElementById('current-user-name').innerText = currentUser.username;
-            const badge = document.getElementById('user-role-badge');
-            
-            if(currentUser.role === 'manager') {
-                badge.innerText = 'الرتبة: مدير (Manager)';
-                document.getElementById('manager-tools').classList.remove('hidden');
-                document.getElementById('add-cat-btn').classList.remove('hidden');
-                document.getElementById('add-rule-btn').classList.remove('hidden');
-                document.getElementById('auth-btn').innerHTML = `<i data-lucide="log-out" class="w-4 h-4"></i> تسجيل خروج`;
-                document.getElementById('auth-btn').setAttribute('onclick', 'logout()');
-            } else if(currentUser.role === 'admin') {
-                badge.innerText = 'الرتبة: إداري (Admin)';
-                document.getElementById('add-rule-btn').classList.remove('hidden');
-                document.getElementById('auth-btn').innerHTML = `<i data-lucide="log-out" class="w-4 h-4"></i> تسجيل خروج`;
-                document.getElementById('auth-btn').setAttribute('onclick', 'logout()');
-            } else {
-                badge.innerText = 'الرتبة: مواطن';
-                document.getElementById('manager-tools').classList.add('hidden');
-                document.getElementById('add-cat-btn').classList.add('hidden');
-                document.getElementById('add-rule-btn').classList.add('hidden');
-                document.getElementById('auth-btn').innerHTML = `<i data-lucide="log-in" class="w-4 h-4"></i> تسجيل دخول كإداري`;
-                document.getElementById('auth-btn').setAttribute('onclick', 'openAuthModal()');
-            }
-            applyFilters();
-            lucide.createIcons();
-        }
-
-        function logout() {
-            currentUser = { username: "مواطن", role: "citizen" };
-            localStorage.removeItem('lawcity_saved_user');
-            updateUIRoles();
-            switchTab('all');
-            showToast('تم تسجيل الخروج بنجاح.');
-        }
-
-        // تهيئة التطبيق عند التحميل
+        // التهيئة عند التحميل
         window.addEventListener('DOMContentLoaded', () => {
-            initAuth();
-            renderCategoriesNav();
-            updateUIRoles();
+            switchSection('citizens');
         });
     </script>
 </body>
