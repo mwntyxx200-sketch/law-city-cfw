@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="theme-default text-size-md">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAW CITY CFW | القوانين والنظام الموحد</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+        body { font-family: 'Cairo', sans-serif; }
+        
+        .theme-default {
+            --bg-main: #020617;
+            --bg-card: rgba(15, 23, 42, 0.75);
+            --border-color: #1e293b;
+            --accent: #6366f1;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-card {
+            background-color: var(--bg-card);
+            border-color: var(--border-color);
+            backdrop-filter: blur(12px);
+        }
+
+        .glass-header {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+        }
+
+        /* تحسينات أنيميشن الإشعارات والبحث */
+        .search-shortcut-badge {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        @media print {
+            aside, header, .no-print, nav.mobile-bottom-nav { display: none !important; }
+            main { width: 100% !important; margin: 0 !important; }
+            body { background: #fff !important; color: #000 !important; }
+            .custom-card { background: #fff !important; border: 1px solid #ccc !important; color: #000 !important; }
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col md:flex-row relative overflow-x-hidden pb-20 md:pb-0">
+
+    <!-- إشعار النسخ والتفاعل (Toast Notification) -->
+    <div id="copy-toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-slate-900/90 text-slate-100 border border-indigo-500/40 px-5 py-3 rounded-2xl shadow-2xl backdrop-blur-md flex items-center gap-3 text-xs font-bold transition-all duration-300 opacity-0 pointer-events-none -translate-y-6">
+        <div class="p-1.5 bg-indigo-500/20 text-indigo-400 rounded-lg">
+            <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+        </div>
+        <span id="toast-msg">تم نسخ البيانات بنجاح!</span>
+    </div>
+
+    <!-- Sidebar التنقل الجانبي (للكمبيوتر) -->
+    <aside class="hidden md:flex w-72 bg-slate-900 border-l border-slate-800 p-5 flex-col justify-between shrink-0 z-20">
+        <div>
+            <!-- اللوجو واسم السيرفر -->
+            <div class="flex items-center gap-3 mb-8 px-2">
+                <div class="p-3 bg-gradient-to-tr from-indigo-600 to-violet-600 rounded-xl text-white shadow-lg shadow-indigo-500/30">
+                    <i data-lucide="scale" class="w-7 h-7"></i>
+                </div>
+                <div>
+                    <h1 class="font-black text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-indigo-300">LAW CITY CFW</h1>
+                    <p class="text-[11px] font-bold text-slate-400" id="user-role-badge">الرتبة: زائر</p>
+                </div>
+            </div>
+
+            <!-- قائمة التنقل -->
+            <nav class="space-y-1.5" id="sidebar-nav">
+                <button onclick="switchTab('fines')" id="btn-fines" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-amber-400 bg-amber-500/10 border border-amber-500/20">
+                    <i data-lucide="gavel" class="w-5 h-5 text-amber-400"></i>
+                    جدول المخالفات والعقوبات
+                </button>
+                <button onclick="switchTab('general')" id="btn-general" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-400 hover:bg-slate-800 hover:text-white">
+                    <i data-lucide="book-open" class="w-5 h-5 text-indigo-400"></i>
+                    القوانين العامة [GEN]
+                </button>
+                <button onclick="switchTab('admin')" id="btn-admin" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20">
+                    <i data-lucide="user-check" class="w-5 h-5 text-rose-500"></i>
+                    قوانين الطاقم والسبورت [ADM]
+                </button>
+                <button onclick="switchTab('manager-panel')" id="btn-manager-panel" class="nav-btn hidden w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-bold transition-all text-amber-400 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20">
+                    <span class="flex items-center gap-3">
+                        <i data-lucide="crown" class="w-5 h-5 text-amber-400"></i>
+                        إدارة الحسابات
+                    </span>
+                    <span class="text-[10px] px-1.5 py-0.5 bg-amber-500/20 rounded text-amber-300 font-extrabold">MANAGER</span>
+                </button>
+            </nav>
+        </div>
+
+        <div class="mt-8 pt-4 border-t border-slate-800 space-y-3">
+            <div class="flex items-center justify-between text-xs text-slate-400">
+                <span>المستخدم الحالي:</span>
+                <span id="current-user-name" class="font-bold text-white">منجر السيرفر</span>
+            </div>
+            <button onclick="openLoginModal()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-xs font-bold rounded-lg text-slate-200 border border-slate-700 transition-all flex items-center justify-center gap-2">
+                <i data-lucide="log-in" class="w-4 h-4"></i> تبديل الحساب
+            </button>
+        </div>
+    </aside>
+
+    <!-- شريط التنقل السفلي الثابت للجوال (Mobile Bottom Nav) -->
+    <nav class="mobile-bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 border-t border-slate-800 px-4 py-2 flex items-center justify-around backdrop-blur-lg">
+        <button onclick="switchTab('fines')" class="flex flex-col items-center gap-1 text-[10px] font-bold text-amber-400">
+            <i data-lucide="gavel" class="w-5 h-5"></i>
+            <span>المخالفات</span>
+        </button>
+        <button onclick="switchTab('general')" class="flex flex-col items-center gap-1 text-[10px] font-bold text-slate-400 hover:text-white">
+            <i data-lucide="book-open" class="w-5 h-5"></i>
+            <span>العامة</span>
+        </button>
+        <button onclick="focusSearchInput()" class="flex flex-col items-center gap-1 text-[10px] font-bold text-slate-400 hover:text-white">
+            <i data-lucide="search" class="w-5 h-5"></i>
+            <span>البحث</span>
+        </button>
+        <button onclick="switchTab('admin')" class="flex flex-col items-center gap-1 text-[10px] font-bold text-rose-400">
+            <i data-lucide="shield" class="w-5 h-5"></i>
+            <span>الإدارة</span>
+        </button>
+    </nav>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="flex-1 flex flex-col min-w-0">
+        
+        <!-- الهيدر العلوي والبحث الذكي -->
+        <header class="sticky top-0 z-30 glass-header border-b border-slate-800/80 px-4 md:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            
+            <!-- حقل البحث المحسّن -->
+            <div class="relative w-full max-w-lg">
+                <i data-lucide="search" class="w-5 h-5 absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" oninput="handleSearch()" placeholder="ابحث باسم القانون، التهمة أو الرمز e.g. TRF-01..." 
+                       class="w-full bg-slate-900/90 border border-slate-700/60 rounded-xl pr-11 pl-20 py-2.5 text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-all">
+                <span class="hidden sm:flex items-center gap-1 absolute left-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 px-2 py-1 rounded search-shortcut-badge font-mono">
+                    Ctrl + K
+                </span>
+            </div>
+            
+            <!-- مؤشر التحديث والطباعة -->
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                <div class="flex items-center gap-2 bg-slate-900/80 border border-slate-800 px-3 py-1.5 rounded-xl text-[11px] text-slate-400 font-bold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>تحديث: أكتوبر 2026</span>
+                </div>
+
+                <button onclick="window.print()" title="طباعة" class="no-print p-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-xl text-slate-300 text-xs font-bold flex items-center gap-1">
+                    <i data-lucide="printer" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">PDF</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="p-4 md:p-8 space-y-6 flex-1 overflow-y-auto">
+
+            <!-- الأكثر بحثاً والفلاتر السريعة -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-slate-400 flex items-center gap-1.5">
+                        <i data-lucide="trending-up" class="w-4 h-4 text-amber-400"></i> الشائعة والأكثر بحثاً:
+                    </span>
+                </div>
+                
+                <!-- التاجات السريعة للبحث -->
+                <div class="flex flex-wrap gap-2 text-xs font-bold">
+                    <button onclick="quickTagSearch('RDM')" class="px-3 py-1.5 bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-xl text-slate-300 transition-all">#RDM</button>
+                    <button onclick="quickTagSearch('VDM')" class="px-3 py-1.5 bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-xl text-slate-300 transition-all">#VDM</button>
+                    <button onclick="quickTagSearch('سرقة البنك')" class="px-3 py-1.5 bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-xl text-slate-300 transition-all">#سرقة_البنك</button>
+                    <button onclick="quickTagSearch('الأسلحة')" class="px-3 py-1.5 bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-xl text-slate-300 transition-all">#الأسلحة</button>
+                    <button onclick="quickTagSearch('خطف')" class="px-3 py-1.5 bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-xl text-slate-300 transition-all">#الخطف</button>
+                    <button onclick="quickTagSearch('الأماكن الآمنة')" class="px-3 py-1.5 bg-slate-900 border border-slate-800 hover:border-indigo-500 rounded-xl text-slate-300 transition-all">#المناطق_الآمنة</button>
+                </div>
+
+                <!-- خيارات تصفية درجة الخطورة -->
+                <div class="flex items-center gap-2 pt-2 border-t border-slate-800/60 overflow-x-auto pb-1 text-xs font-bold">
+                    <span class="text-slate-400 shrink-0">تصفية الخطورة:</span>
+                    <button onclick="filterSeverity('all')" class="severity-btn shrink-0 px-3 py-1.5 bg-indigo-600 text-white rounded-xl">الكل</button>
+                    <button onclick="filterSeverity('high')" class="severity-btn shrink-0 px-3 py-1.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500 hover:text-white rounded-xl transition-all">🔴 شديد الخطورة</button>
+                    <button onclick="filterSeverity('medium')" class="severity-btn shrink-0 px-3 py-1.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-500 hover:text-white rounded-xl transition-all">🟡 متوسط الخطورة</button>
+                    <button onclick="filterSeverity('low')" class="severity-btn shrink-0 px-3 py-1.5 bg-sky-500/10 text-sky-400 border border-sky-500/20 hover:bg-sky-500 hover:text-white rounded-xl transition-all">🔵 تنظيمي / منخفض</button>
+                </div>
+            </div>
+
+            <!-- جدول المخالفات والجرائم -->
+            <section id="sec-fines" class="tab-content space-y-4">
+                <div class="border-b border-slate-800 pb-3 flex items-center justify-between">
+                    <h2 class="text-xl md:text-2xl font-bold flex items-center gap-2.5 text-amber-400">
+                        <i data-lucide="gavel"></i> لائحة المخالفات والجرائم الجنائية
+                    </h2>
+                </div>
+
+                <!-- عرض الجوال العائم (Mobile Cards View) -->
+                <div id="mobile-fines-cards" class="md:hidden space-y-3">
+                    <!-- تعبئة الجوال تلقائياً -->
+                </div>
+
+                <!-- عرض الحاسوب (Table View) -->
+                <div class="hidden md:block custom-card border rounded-2xl overflow-hidden shadow-2xl">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right text-xs md:text-sm">
+                            <thead class="bg-slate-900/90 border-b border-slate-800 text-slate-400 font-bold uppercase">
+                                <tr>
+                                    <th class="p-3.5">الكود</th>
+                                    <th class="p-3.5">الجريمة / المخالفة</th>
+                                    <th class="p-3.5">السجن</th>
+                                    <th class="p-3.5">الغرامة</th>
+                                    <th class="p-3.5">الكفالة</th>
+                                    <th class="p-3.5">نسخ النص المختصر</th>
+                                </tr>
+                            </thead>
+                            <tbody id="fines-table-body" class="divide-y divide-slate-800/60 text-slate-200">
+                                <!-- تعبئة الكمبيوتر تلقائياً -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- القوانين العامة -->
+            <section id="sec-general" class="tab-content space-y-4 hidden">
+                <div class="border-b border-slate-800 pb-3">
+                    <h2 class="text-xl md:text-2xl font-bold flex items-center gap-2.5 text-indigo-400">
+                        <i data-lucide="book-open"></i> القوانين العامة والسيرفر [GEN]
+                    </h2>
+                </div>
+                <div class="grid gap-3" id="general-rules-list"></div>
+            </section>
+
+            <!-- القوانين الإدارية -->
+            <section id="sec-admin" class="tab-content space-y-4 hidden">
+                <div class="border-b border-rose-500/30 pb-3">
+                    <h2 class="text-xl md:text-2xl font-bold flex items-center gap-2.5 text-rose-500">
+                        <i data-lucide="shield-alert"></i> قوانين طاقم الدعم الفني والسبورت [ADM]
+                    </h2>
+                </div>
+                <div class="grid gap-3" id="admin-rules-list"></div>
+            </section>
+
+            <!-- لوحة المنجر -->
+            <section id="sec-manager-panel" class="tab-content space-y-6 hidden">
+                <h2 class="text-2xl font-bold text-amber-400">إدارة الحسابات والرتب</h2>
+                <div id="users-list-body"></div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Modal تسجيل الدخول السريع -->
+    <div id="login-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl p-6 space-y-4 shadow-2xl">
+            <h3 class="text-lg font-bold text-white">تسجيل الدخول / تبديل الحساب</h3>
+            <div id="login-accounts-list" class="space-y-2"></div>
+            <button onclick="closeLoginModal()" class="w-full py-2 bg-slate-800 text-xs text-slate-300 rounded-xl">إلغاء</button>
+        </div>
+    </div>
+
+    <script>
+        let users = [
+            { id: 1, name: "M2king (منجر السيرفر)", role: "manager" },
+            { id: 2, name: "إداري النظام", role: "admin" },
+            { id: 3, name: "مواطن", role: "user" }
+        ];
+        let currentUser = users[0];
+
+        // القوانين الإدارية مع مستويات الخطورة
+        const adminRules = [
+            { code: "ADM-01", text: "عند وضع دفن يجب التوجه إلى روم البريك مباشرة.", penalty: "تنبيه إداري / خصم نقاط سبورت.", severity: "low" },
+            { code: "ADM-02", text: "أي شخص يجيك بدون آخر 20 دقيقة تصوير يجب طلب إثبات منه قبل التعامل مع الحالة.", penalty: "إلغاء التعامل مع الحالة + تنبيه إداري.", severity: "medium" },
+            { code: "ADM-05", text: "يمنع استخدام صلاحيات السبورت لمصلحة شخصية أو لمساعدة الأصدقاء.", penalty: "سحب رتبة السبورت فوراً + حظر إداري.", severity: "high" },
+            { code: "ADM-10", text: "يمنع مشاركة معلومات الإدارة أو محتوى التذاكر خارج الإدارة.", penalty: "سحب الرتبة + بلاك لست إداري نهائي.", severity: "high" }
+        ];
+
+        // القوانين العامة
+        const generalRules = [
+            { code: "GEN-01", text: "يمنع القتل العشوائي (RDM) أو الدهس (VDM) بدون سيناريو منطقي مسبق.", penalty: "حظر مؤقت من 3 إلى 7 أيام.", severity: "high" },
+            { code: "GEN-02", text: "يمنع خروجك أثناء السيناريو القائم (Combat Logging).", penalty: "تحذير + سحب الأغراض + حظر 24 ساعة.", severity: "medium" },
+            { code: "GEN-03", text: "يمنع ممارسة أي نشاط إجرامي أو خطف داخل المناطق الآمنة (Safe Zones).", penalty: "تحذير إداري ثاني + حظر 3 أيام.", severity: "high" }
+        ];
+
+        // المخالفات وجدول الجرائم
+        const finesData = [
+            { code: "TRF-01", crime: "قطع الاشارة", jail: "-", fine: "500$", bail: "-", desc: "قطع الاشارة الحمراء", severity: "low" },
+            { code: "TRF-04", crime: "القيادة المتهورة", jail: "-", fine: "2,000$", bail: "3,500$", desc: "تفحيط أو صدم أو تعريض الحياة للخطر", severity: "medium" },
+            { code: "WPN-01", crime: "سلاح غير مرخص", jail: "20 شهر", fine: "2,500$", bail: "3,000$", desc: "حيازة فرد غير مرخص", severity: "medium" },
+            { code: "WPN-02", crime: "سلاح غير قانوني (ثقيل)", jail: "30 شهر", fine: "5,000$", bail: "5,000$", desc: "حيازة سلاح آلي أو ثقيل", severity: "high" },
+            { code: "CRM-01", crime: "القتل العمد", jail: "30 شهر", fine: "4,000$", bail: "-", desc: "إنهاء حياة لاعب بسلاح", severity: "high" },
+            { code: "CRM-02", crime: "سرقة البنك المركزي", jail: "120 شهر", fine: "35,000$", bail: "-", desc: "اقتحام وسرقة الخزنة الرئيسية", severity: "high" }
+        ];
+
+        // نسخ النص المنسق
+        function copyFormattedRule(code, text, penalty) {
+            const formattedString = `[LAW CITY CFW] | قانون #${code} | ${text} (العقوبة: ${penalty})`;
+            navigator.clipboard.writeText(formattedString).then(() => {
+                showToast(`تم نسخ القانون #${code} بنجاح!`);
+            });
+        }
+
+        function copyFineFormat(code, crime, jail, fine, bail) {
+            const formattedString = `[LAW CITY CFW] | التهمة: ${crime} [#${code}] | السجن: ${jail} | الغرامة: ${fine} | الكفالة: ${bail}`;
+            navigator.clipboard.writeText(formattedString).then(() => {
+                showToast(`تم نسخ المخالفة #${code} بنجاح!`);
+            });
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('copy-toast');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-6');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none', '-translate-y-6');
+            }, 2500);
+        }
+
+        // تركيز البحث عند الضغط بالجوال
+        function focusSearchInput() {
+            document.getElementById('searchInput').focus();
+        }
+
+        // البحث اللحظي بالتاج السريع
+        function quickTagSearch(term) {
+            const input = document.getElementById('searchInput');
+            input.value = term;
+            handleSearch();
+        }
+
+        // التصفية بالخطورة
+        function filterSeverity(level) {
+            document.querySelectorAll('.rule-card, #fines-table-body tr, .mobile-fine-card').forEach(el => {
+                if (level === 'all') {
+                    el.style.display = "";
+                } else {
+                    const sev = el.getAttribute('data-severity');
+                    el.style.display = (sev === level) ? "" : "none";
+                }
+            });
+        }
+
+        // اختصار الكيبورد للبحث (Ctrl + K)
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                focusSearchInput();
+            }
+        });
+
+        // رندر جدول الجوال والكمبيوتر
+        function renderFines() {
+            const tbody = document.getElementById('fines-table-body');
+            const mobileCards = document.getElementById('mobile-fines-cards');
+
+            // رندر الحاسوب
+            tbody.innerHTML = finesData.map(f => `
+                <tr class="hover:bg-slate-800/40 transition-all font-medium" data-severity="${f.severity}">
+                    <td class="p-3.5 font-mono text-xs text-amber-400 font-bold">#${f.code}</td>
+                    <td class="p-3.5 font-bold text-slate-100">${f.crime}</td>
+                    <td class="p-3.5 font-mono text-amber-300 font-bold">${f.jail}</td>
+                    <td class="p-3.5 font-mono text-emerald-400 font-bold">${f.fine}</td>
+                    <td class="p-3.5 font-mono text-cyan-400">${f.bail}</td>
+                    <td class="p-3.5">
+                        <button onclick="copyFineFormat('${f.code}', '${f.crime}', '${f.jail}', '${f.fine}', '${f.bail}')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-amber-500 hover:text-slate-950 border border-slate-700 rounded-lg text-xs font-bold transition-all flex items-center gap-1">
+                            <i data-lucide="copy" class="w-3 h-3"></i> نسخ التهمة
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // رندر الجوال المثالي
+            mobileCards.innerHTML = finesData.map(f => `
+                <div class="mobile-fine-card custom-card border border-slate-800 rounded-2xl p-4 space-y-3" data-severity="${f.severity}">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                        <span class="font-mono text-xs font-bold text-amber-400">#${f.code}</span>
+                        <span class="text-xs font-bold px-2 py-0.5 rounded ${
+                            f.severity === 'high' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' :
+                            f.severity === 'medium' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-sky-500/10 text-sky-400 border border-sky-500/20'
+                        }">
+                            ${f.severity === 'high' ? 'شديد' : f.severity === 'medium' ? 'متوسط' : 'تنظيمي'}
+                        </span>
+                    </div>
+                    <h4 class="font-bold text-slate-100 text-sm">${f.crime}</h4>
+                    <div class="grid grid-cols-3 gap-2 text-[11px] font-mono text-center bg-slate-950 p-2 rounded-xl border border-slate-800/80">
+                        <div><span class="text-slate-500 block">السجن:</span><strong class="text-amber-300">${f.jail}</strong></div>
+                        <div><span class="text-slate-500 block">الغرامة:</span><strong class="text-emerald-400">${f.fine}</strong></div>
+                        <div><span class="text-slate-500 block">الكفالة:</span><strong class="text-cyan-400">${f.bail}</strong></div>
+                    </div>
+                    <button onclick="copyFineFormat('${f.code}', '${f.crime}', '${f.jail}', '${f.fine}', '${f.bail}')" class="w-full py-2 bg-slate-800 hover:bg-amber-500 hover:text-slate-950 border border-slate-700 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i> نسخ نص التهمة
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // رندر القوانين العامة
+        function renderGeneralRules() {
+            const container = document.getElementById('general-rules-list');
+            container.innerHTML = generalRules.map(r => `
+                <div class="rule-card border-r-4 border-r-indigo-500 custom-card border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3" data-severity="${r.severity}">
+                    <div class="space-y-1">
+                        <span class="text-xs font-mono font-bold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">#${r.code}</span>
+                        <p class="text-sm font-semibold text-slate-200 mt-1">${r.text}</p>
+                        <p class="text-xs text-slate-400">⚖️ العقوبة: <strong class="text-slate-300">${r.penalty}</strong></p>
+                    </div>
+                    <button onclick="copyFormattedRule('${r.code}', '${r.text}', '${r.penalty}')" class="shrink-0 px-3 py-2 bg-slate-800 hover:bg-indigo-950 text-indigo-300 border border-slate-700 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i> نسخ النص
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // رندر القوانين الإدارية
+        function renderAdminRules() {
+            const container = document.getElementById('admin-rules-list');
+            container.innerHTML = adminRules.map(r => `
+                <div class="rule-card border-r-4 border-r-rose-500 custom-card border rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3" data-severity="${r.severity}">
+                    <div class="space-y-1">
+                        <span class="text-xs font-mono font-bold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">#${r.code}</span>
+                        <p class="text-sm font-semibold text-slate-200 mt-1">${r.text}</p>
+                        <p class="text-xs text-slate-400">⚖️ العقوبة: <strong class="text-slate-300">${r.penalty}</strong></p>
+                    </div>
+                    <button onclick="copyFormattedRule('${r.code}', '${r.text}', '${r.penalty}')" class="shrink-0 px-3 py-2 bg-slate-800 hover:bg-rose-950 text-rose-300 border border-slate-700 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i> نسخ النص
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(el => {
+                el.classList.remove('bg-amber-500/10', 'text-amber-400', 'border-amber-500/20');
+                el.classList.add('text-slate-400');
+            });
+
+            const activeTab = document.getElementById(`sec-${tabId}`);
+            if(activeTab) activeTab.classList.remove('hidden');
+
+            const activeBtn = document.getElementById(`btn-${tabId}`);
+            if(activeBtn) {
+                activeBtn.classList.add('bg-amber-500/10', 'text-amber-400', 'border-amber-500/20');
+            }
+            lucide.createIcons();
+        }
+
+        function openLoginModal() {
+            const list = document.getElementById('login-accounts-list');
+            list.innerHTML = users.map(u => `
+                <button onclick="loginAs(${u.id})" class="w-full text-right p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between text-xs font-bold text-white">
+                    <span>${u.name}</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300">${u.role}</span>
+                </button>
+            `).join('');
+            document.getElementById('login-modal').classList.remove('hidden');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('login-modal').classList.add('hidden');
+        }
+
+        function loginAs(userId) {
+            currentUser = users.find(u => u.id === userId);
+            document.getElementById('current-user-name').innerText = currentUser.name;
+            closeLoginModal();
+        }
+
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('.rule-card, #fines-table-body tr, .mobile-fine-card').forEach(el => {
+                el.style.display = el.innerText.toLowerCase().includes(query) ? "" : "none";
+            });
+        }
+
+        window.onload = () => {
+            renderAdminRules();
+            renderGeneralRules();
+            renderFines();
+            lucide.createIcons();
+        };
+    </script>
+</body>
+</html>
